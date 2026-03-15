@@ -3,7 +3,7 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 const COLOR_MAP: Record<string, string> = {
-  TB: "#f31260",
+  TB: "#c9122aff",
   Normal: "#17c964",
 };
 const getColor = (label: string) => COLOR_MAP[label] || "#f5a524";
