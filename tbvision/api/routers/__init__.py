@@ -1,2 +1,2 @@
 """Aggregate router modules."""
-from . import health, predict, rag
+from . import followup, health, predict, rag
