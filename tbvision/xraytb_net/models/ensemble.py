@@ -85,24 +85,3 @@ def load_ensemble(
     model.to(device)
     model.eval()
     return model
-
-
-# Test ensemble
-# -------------------------------
-if __name__ == "__main__":
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = TBEnsemble(use_mc_dropout=True).to(device)
-
-    x = torch.randn(2, 1, 224, 224).to(device)
-
-    # Forward pass
-    output = model(x)
-    print(f"Output shape: {output.shape}")
-    print(f"Output: {output}")
-
-    # Uncertainty estimation
-    mean, std = model.predict_with_uncertainty(x, n_samples=10)
-    print(f"\nMean prediction: {mean}")
-    print(f"Std prediction: {std}")
-
-    print("\n✅ Ensemble test passed")
