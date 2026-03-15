@@ -145,3 +145,12 @@ This helps detect cases where the model may be unsure.
 When uncertainty is high, the system can optionally use cloud AI models to validate findings and generate clinical explanations.
 
 This ensures **safety without requiring constant internet connectivity.**
+
+## 🧪 Local Deployment Helpers
+
+The repository now includes helpers so you can start the backend and frontend side-by-side for local deployments:
+
+- `python tbvision/run_backend.py` boots the FastAPI app via `uvicorn` with proxy headers enabled, a sensible worker count, and configurable host/port/log level through `TBVISION_*` environment variables.
+- `./run.sh` starts the backend helper above in the background, installs frontend dependencies if needed, and then runs `npm run dev -- --hostname 0.0.0.0 --port 3000`. Stop the script (Ctrl+C) to shut down both processes cleanly.
+
+Install Python/Node dependencies once (`pip install -r requirements.txt` and `cd frontend && npm install`), then use `./run.sh` for full-stack local deployments.

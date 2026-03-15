@@ -22,7 +22,6 @@ class PredictionResponse(BaseModel):
     uncertainty_std: float
     uncertainty_level: str
     metadata: Optional[Dict[str, Any]] = None
-    config_snapshot: Dict[str, Any]
     gradcam_region: Optional[str] = None
     gradcam_image: Optional[str] = None
     mode: str

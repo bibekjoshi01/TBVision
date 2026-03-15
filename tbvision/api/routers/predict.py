@@ -50,18 +50,8 @@ async def predict(
     if gradcam_url and not gradcam_url.startswith("http"):
         pred_data["gradcam_image"] = urljoin(str(request.base_url), gradcam_url.lstrip("/"))
 
-    config_snapshot = {
-        "checkpoint": str(request.app.state.config.checkpoint_path),
-        "image_size": request.app.state.config.image_size,
-        "mode": request.app.state.config.mode,
-        "backbones": request.app.state.config.backbones,
-        "dropout": request.app.state.config.dropout,
-        "use_mc_dropout": request.app.state.config.use_mc_dropout,
-    }
-
     return PredictionResponse(
         label_map=classifier_service.label_map,
         metadata=parsed_metadata,
-        config_snapshot=config_snapshot,
         **pred_data,
     )

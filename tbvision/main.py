@@ -60,6 +60,6 @@ app.include_router(api_router, prefix="/api")
 @app.get("/", tags=["meta"], status_code=200)
 async def root() -> dict[str, str]:
     return {
-        "service": "X Ray TB Backend Service",
+        "service": "TBVision Backend Service",
         "status": "ok",
     }

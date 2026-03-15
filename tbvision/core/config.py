@@ -27,9 +27,7 @@ class Settings(BaseSettings):
     )
     dropout: float = Field(0.3, ge=0.0, le=0.9)
     use_mc_dropout: bool = Field(False)
-    media_root: Path = Field(
-        default_factory=lambda: ROOT_DIR / "tbvision" / "static"
-    )
+    media_root: Path = Field(default_factory=lambda: ROOT_DIR / "tbvision" / "static")
     media_url: str = Field("/media")
 
     app_env: str = "development"
