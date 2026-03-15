@@ -7,7 +7,6 @@ from typing import Any, Dict, Iterable, List
 
 from tbvision.adapters.llm.gemini_adapter import GeminiAdapter
 from tbvision.adapters.llm.mistral_adapter import MistralAdapter
-from tbvision.adapters.llm.voxtral_adapter import MistralVoxtralAgentAdapter
 from tbvision.core.config import Settings
 from tbvision.prompts.explanation import explanation_prompt, synthesis_prompt
 from tbvision.prompts.followup import followup_prompt
@@ -28,17 +27,6 @@ class GenerationService:
             if settings.mistral_api_key
             else None
         )
-        self.mistral_voxtral: MistralVoxtralAgentAdapter | None = None
-        if settings.mistral_api_key:
-            try:
-                self.mistral_voxtral = MistralVoxtralAgentAdapter(
-                    settings.mistral_api_key.get_secret_value()
-                )
-            except Exception as exc:
-                logger.warning(
-                    "Could not initialize Mistral Voxtral agent (%s); falling back to chat",
-                    exc,
-                )
 
     async def generate_validation(
         self,
@@ -93,7 +81,7 @@ class GenerationService:
         question: str,
         history: Iterable[Dict[str, str]],
     ) -> str:
-        adapter = self.mistral_voxtral or self.mistral
+        adapter = self.mistral
         if not adapter:
             return "Follow-up generation is unavailable (no LLM configured)."
 
