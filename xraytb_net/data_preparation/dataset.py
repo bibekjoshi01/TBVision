@@ -1,7 +1,7 @@
 import os
 import torch
 from torch.utils.data import Dataset
-from data_preparation.preprocessing import LungPreprocessor
+from .preprocessing import LungPreprocessor
 
 
 class CXRDataset(Dataset):

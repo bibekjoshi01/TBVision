@@ -2,7 +2,6 @@ import argparse
 import json
 import os
 from pathlib import Path
-import sys
 
 import numpy as np
 import torch
@@ -11,107 +10,17 @@ from torch.cuda.amp import GradScaler
 from torch.optim import AdamW, lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    precision_recall_fscore_support,
-    roc_auc_score,
-)
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
-if str(ROOT_DIR) not in sys.path:
-    sys.path.append(str(ROOT_DIR))
-
-from data_preparation.dataset import CXRDataset
-from data_preparation.transforms import get_train_transforms, get_val_transforms
-from models.classifier import TBClassifier
-from models.ensemble import TBEnsemble
-from training.losses import FocalLoss
+from ai_model.data_preparation.dataset import CXRDataset
+from ai_model.data_preparation.transforms import get_train_transforms, get_val_transforms
+from ai_model.models.classifier import TBClassifier
+from ai_model.models.ensemble import TBEnsemble
+from ai_model.inference.metrics import evaluate_model
+from ai_model.training.losses import FocalLoss
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DEFAULT_IMAGE_SIZE = 224
-
-
-def _compute_sensitivity_specificity(conf_mat: np.ndarray):
-    tp = np.diag(conf_mat)
-    fn = conf_mat.sum(axis=1) - tp
-    fp = conf_mat.sum(axis=0) - tp
-    tn = conf_mat.sum() - (tp + fn + fp)
-
-    sensitivities = [
-        tp_i / (tp_i + fn_i) if tp_i + fn_i > 0 else 0.0 for tp_i, fn_i in zip(tp, fn)
-    ]
-
-    specificities = [
-        tn_i / (tn_i + fp_i) if tn_i + fp_i > 0 else 0.0 for tn_i, fp_i in zip(tn, fp)
-    ]
-
-    return float(np.mean(sensitivities)), float(np.mean(specificities))
-
-
-def evaluate(model, loader, device: str = DEVICE, num_classes: int = 3):
-    model.eval()
-    all_probs = []
-    all_preds = []
-    all_labels = []
-
-    with torch.no_grad():
-        for batch in loader:
-            images = batch["image"].to(device)
-            labels = batch["label"].to(device)
-
-            logits = model(images)
-            probs = torch.softmax(logits, dim=1)
-            preds = torch.argmax(probs, dim=1)
-
-            all_probs.append(probs.cpu().numpy())
-            all_preds.extend(preds.cpu().numpy())
-            all_labels.extend(labels.cpu().numpy())
-
-    all_probs = np.vstack(all_probs)
-    all_preds = np.array(all_preds)
-    all_labels = np.array(all_labels)
-
-    acc = accuracy_score(all_labels, all_preds)
-    precision, recall, f1, _ = precision_recall_fscore_support(
-        all_labels, all_preds, average="macro"
-    )
-
-    auc = float("nan")
-    try:
-        truth_onehot = np.eye(num_classes)[all_labels]
-        auc = float(
-            roc_auc_score(truth_onehot, all_probs, average="macro", multi_class="ovr")
-        )
-    except ValueError:
-        pass
-
-    conf_mat = confusion_matrix(all_labels, all_preds, labels=list(range(num_classes)))
-    sensitivity, specificity = _compute_sensitivity_specificity(conf_mat)
-
-    class_accuracy = []
-    for idx in range(num_classes):
-        denom = conf_mat[idx].sum()
-        if denom > 0:
-            class_accuracy.append(float(conf_mat[idx, idx]) / float(denom))
-        else:
-            class_accuracy.append(0.0)
-
-    return {
-        "accuracy": acc,
-        "precision": precision,
-        "recall": recall,
-        "f1": f1,
-        "auc": auc,
-        "sensitivity": sensitivity,
-        "specificity": specificity,
-        "class_accuracy": class_accuracy,
-        "confusion_matrix": conf_mat.tolist(),
-        "predictions": all_preds,
-        "labels": all_labels,
-        "probabilities": all_probs,
-    }
 
 
 def _compute_class_weights(dataset, num_classes: int = 3):
@@ -246,7 +155,7 @@ def train(args):
         print(f"\nEpoch {epoch+1} Summary:")
         print(f"Avg Training Loss: {avg_epoch_loss:.4f}")
 
-        val_metrics = evaluate(
+        val_metrics = evaluate_model(
             model, val_loader, device=DEVICE, num_classes=model.num_classes
         )
         class_acc_str = ", ".join(f"{acc:.3f}" for acc in val_metrics["class_accuracy"])
@@ -291,10 +200,10 @@ def train(args):
         model.load_state_dict(torch.load(checkpoint_path, map_location=DEVICE))
 
     print("\nFinal evaluation on best model")
-    best_val_metrics = evaluate(
+    best_val_metrics = evaluate_model(
         model, val_loader, device=DEVICE, num_classes=model.num_classes
     )
-    final_test_metrics = evaluate(
+    final_test_metrics = evaluate_model(
         model, test_loader, device=DEVICE, num_classes=model.num_classes
     )
 

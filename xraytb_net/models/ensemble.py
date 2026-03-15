@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from typing import List, Optional
 
-from models.classifier import TBClassifier
+from .classifier import TBClassifier
 
 
 # Ensemble Model

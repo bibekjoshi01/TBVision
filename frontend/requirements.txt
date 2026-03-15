@@ -1,0 +1,1 @@
+# Add frontend-specific Python dependencies here (e.g., Streamlit or Gradio).
