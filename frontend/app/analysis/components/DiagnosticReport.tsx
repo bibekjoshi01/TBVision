@@ -1,14 +1,13 @@
-import { Activity, Info, MessageCircle } from "lucide-react";
-import { Button } from "@heroui/button";
+import { Activity, Info } from "lucide-react";
 import { Card, CardBody } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Image } from "@heroui/image";
 import { Progress as UIProgress } from "@heroui/progress";
 import { Chip as UIChip } from "@heroui/chip";
-import NextLink from "next/link";
 import type { PredictionResponse } from "@/types";
 import { ProbabilityPie } from "./ProbabilityPie";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
+import ChatSection from "./ChatSection";
 
 const Progress = UIProgress as any;
 const Chip = UIChip as any;
@@ -167,30 +166,8 @@ export function DiagnosticReport({ results, previewUrl }: DiagnosticReportProps)
         </Card>
       )}
 
-      {/* 7. AI Chat CTA Card */}
-      <Card className="shadow-none border border-primary/20 bg-primary/5 no-print">
-        <CardBody className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
-              <MessageCircle size={24} />
-            </div>
-            <div className="text-left">
-              <h3 className="text-lg font-black">Discuss Findings with AI</h3>
-              <p className="text-sm text-default-600 font-medium">Have questions about these results? Chat with our specialist AI assistant.</p>
-            </div>
-          </div>
-          <Button
-            as={NextLink}
-            href="/chat"
-            color="primary"
-            size="lg"
-            className="font-bold px-8 shadow-lg shadow-primary/20"
-            startContent={<MessageCircle size={18} />}
-          >
-            Start Conversation
-          </Button>
-        </CardBody>
-      </Card>
+      {/* 7. Embedded Chat Section */}
+      <ChatSection />
     </div>
   );
 }
