@@ -1,51 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema, type FormData } from "@/lib/schema";
+import { formSchema } from "@/lib/schema";
+import type { FormData } from "@/lib/schema";
 import type { PredictionResponse } from "@/types";
-import { runPrediction } from "@/services";
-import { useImagePersistence } from "./useImagePersistence";
+import { runPrediction } from "@/services/predict";
+import { saveFile, getFile, clearStorage } from "@/lib/db";
+import { normalizeMetadata } from "@/lib/metadata";
 
-type ViewState = "form" | "results";
-
-const STORAGE_KEY = "tbvision_latest_results";
-
-interface PersistedState {
-  data: PredictionResponse;
-  viewState: ViewState;
-}
-
-export interface UseAnalysisReturn {
-  viewState: ViewState;
-  setViewState: React.Dispatch<React.SetStateAction<ViewState>>;
-  selectedFile: File | null;
-  previewUrl: string | null;
-  isAnalyzing: boolean;
-  error: string | null;
-  results: PredictionResponse | null;
-  control: ReturnType<typeof useForm<FormData>>["control"];
-  errors: ReturnType<typeof useForm<FormData>>["formState"]["errors"];
-  handleSubmit: ReturnType<typeof useForm<FormData>>["handleSubmit"];
-  handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  removeImage: () => void;
-  onFormSubmit: (data: FormData) => Promise<void>;
-  resetAnalysis: () => void;
-  handlePrint: () => void;
-}
-
-export function useAnalysis(): UseAnalysisReturn {
-  const [viewState, setViewState] = useState<ViewState>("form");
-  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+export function useAnalysis() {
+  const [viewState, setViewState] = useState<"form" | "results">("form");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<PredictionResponse | null>(null);
-
-  const {
-    selectedFile,
-    previewUrl,
-    handleImageUpload,
-    removeImage,
-    restoreImage,
-  } = useImagePersistence();
 
   const {
     control,
@@ -53,7 +22,7 @@ export function useAnalysis(): UseAnalysisReturn {
     reset,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(formSchema) as Parameters<typeof useForm<FormData>>[0]["resolver"],
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       patient_info: { age: "", sex: "male", region: "" },
       symptoms: {
@@ -78,70 +47,91 @@ export function useAnalysis(): UseAnalysisReturn {
         chronic_lung_disease: false,
         recent_pneumonia: false,
       },
-      screening_context: { screening_type: "symptomatic", location: "" },
+      screening_context: {
+        screening_type: "symptomatic",
+        location: "",
+      },
       clinical_history: "",
     },
   });
 
-  // Restore state on mount
   useEffect(() => {
     const init = async () => {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      try {
-        const parsed = JSON.parse(raw) as PersistedState;
-        setResults(parsed.data);
-        await restoreImage();
-        if (parsed.viewState === "results") setViewState("results");
-      } catch (e) {
-        console.error("Failed to restore saved results", e);
+      const savedResults = localStorage.getItem("tbvision_latest_results");
+      if (savedResults) {
+        try {
+          const parsed = JSON.parse(savedResults);
+          const data = parsed.data as PredictionResponse;
+          setResults(data);
+
+          // Restore image from IndexedDB
+          const file = await getFile("latest_upload");
+          if (file) {
+            setSelectedFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
+          }
+
+          if (parsed.viewState === "results") setViewState("results");
+        } catch (e) {
+          console.error("Failed to parse saved results", e);
+        }
       }
     };
     init();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onFormSubmit = useCallback(
-    async (data: FormData) => {
-      if (!selectedFile) {
-        setError("Medical image (Radiograph) is required.");
-        return;
-      }
-      setIsAnalyzing(true);
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
       setError(null);
-      try {
-        const resData = await runPrediction(
-          selectedFile,
-          data as unknown as Record<string, unknown>
-        );
-        setResults(resData);
-        setViewState("results");
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({ data: resData, viewState: "results" } satisfies PersistedState)
-        );
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unexpected error occurred."
-        );
-      } finally {
-        setIsAnalyzing(false);
-      }
-    },
-    [selectedFile]
-  );
+      // Persist to IDB
+      saveFile("latest_upload", file).catch(console.error);
+    }
+  };
 
-  const resetAnalysis = useCallback(() => {
+  const removeImage = () => {
+    setPreviewUrl(null);
+    setSelectedFile(null);
+    clearStorage().catch(console.error);
+  };
+
+  const onFormSubmit = async (data: any) => {
+    if (!selectedFile) {
+      setError("Medical image (Radiograph) is required.");
+      return;
+    }
+    setIsAnalyzing(true);
+    setError(null);
+    try {
+      const resData = await runPrediction(selectedFile, normalizeMetadata(data));
+      setResults(resData as PredictionResponse);
+      setViewState("results");
+      localStorage.setItem(
+        "tbvision_latest_results",
+        JSON.stringify({ data: resData, viewState: "results" })
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const resetAnalysis = () => {
     setViewState("form");
     setResults(null);
+    setSelectedFile(null);
+    setPreviewUrl(null);
     reset();
-    localStorage.removeItem(STORAGE_KEY);
-    removeImage();
-  }, [reset, removeImage]);
+    localStorage.removeItem("tbvision_latest_results");
+    clearStorage().catch(console.error);
+  };
 
-  const handlePrint = useCallback(() => {
+  const handlePrint = () => {
     window.print();
-  }, []);
+  };
 
   return {
     viewState,

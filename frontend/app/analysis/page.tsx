@@ -3,7 +3,7 @@
 import { Button } from "@heroui/button";
 import { RotateCcw, Printer } from "lucide-react";
 import { title } from "@/components/primitives";
-import { useAnalysis } from "./useAnalysis";
+import { useAnalysis } from "@/hooks/useAnalysis";
 import { AnalysisForm } from "./components/AnalysisForm";
 import { DiagnosticReport } from "./components/DiagnosticReport";
 

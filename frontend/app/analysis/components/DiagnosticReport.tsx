@@ -6,7 +6,7 @@ import { Image } from "@heroui/image";
 import { Progress as UIProgress } from "@heroui/progress";
 import { Chip as UIChip } from "@heroui/chip";
 import NextLink from "next/link";
-import type { PredictionResponse } from "../schema";
+import type { PredictionResponse } from "@/types";
 import { ProbabilityPie } from "./ProbabilityPie";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 

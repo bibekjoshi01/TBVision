@@ -6,6 +6,7 @@ import { Button } from "@heroui/button";
 import { Textarea } from "@heroui/input";
 import { ScrollShadow } from "@heroui/scroll-shadow";
 import clsx from "clsx";
+import { sendChatQuery } from "@/services/chat";
 
 interface Message {
   id: string;
@@ -42,15 +43,7 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/rag", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: userMessage.content, top_k: 3 }),
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch response");
-
-      const data = await response.json();
+      const data = await sendChatQuery(userMessage.content, 3);
 
       let botContent = "";
       if (data.documents && data.documents.length > 0) {

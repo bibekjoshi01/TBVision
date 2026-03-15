@@ -8,7 +8,23 @@
 
 @theme {
     --font-sans: "font", sans-serif;
+    --font-body: "font", sans-serif;
     --font-mono: "monospace", monospace;
+}
+
+@layer base {
+    button,
+    [role="button"],
+    nav,
+    menu,
+    label,
+    small,
+    p.text-xs,
+    p.text-sm,
+    span.text-xs,
+    span.text-sm {
+        font-family: var(--font-body);
+    }
 }
 
 @layer utilities {

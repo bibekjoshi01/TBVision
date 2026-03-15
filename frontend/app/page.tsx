@@ -24,7 +24,7 @@ export default function Home() {
       {/* Top Badge */}
       <div className="flex gap-2 items-center mt-6">
         <ShieldCheck size={16} className="text-success" />
-        <span className="text-sm font-medium text-default-600">AI-Powered Medical Imaging</span>
+        <span className="text-sm font-medium text-default-600">AI-Powered Tuberculosis Detection</span>
       </div>
 
       <div className="inline-block max-w-4xl text-center justify-center z-10">
@@ -32,10 +32,11 @@ export default function Home() {
           <strong>Next-Generation Analysis for</strong>{" "}
         </h1>
         <h1 className={title({ size: "lg", color: "blue", class: "tracking-tight leading-tight block mt-2" })}>
-          <strong>Chest Radiography</strong>
+          <strong>Tuberculosis Screening</strong>
         </h1>
-        <div className={subtitle({ class: "mt-8 text-default-500 max-w-2xl mx-auto leading-relaxed text-sm" })}>
-          Empower your diagnostic workflow with instantaneous, AI-driven insights into chest X-ray imaging. Upload, process, and diagnose with greater confidence and efficiency.
+        <div className="mt-8 text-default-500 max-w-3xl mx-auto leading-relaxed text-lg font-body">
+          Detect tuberculosis from chest X-rays using AI-powered analysis.
+          Get instant predictions, visual explanations, and clinical insights to support early diagnosis.
         </div>
       </div>
 
@@ -45,7 +46,7 @@ export default function Home() {
             color: "primary",
             radius: "full",
             size: "lg",
-            class: "font-semibold shadow-lg shadow-primary/30 w-full sm:w-auto px-8"
+            class: "font-semibold w-full sm:w-auto px-8"
           })}
           href="/analysis"
         >
@@ -61,7 +62,7 @@ export default function Home() {
           })}
           href="/demo"
         >
-          View Live Demo
+          See How It Works
         </Link>
       </div>
 

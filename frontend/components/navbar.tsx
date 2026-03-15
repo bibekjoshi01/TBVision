@@ -20,12 +20,12 @@ export const Navbar = () => {
 
 
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky" className="no-print">
+    <HeroUINavbar maxWidth="xl" position="sticky" className="no-print border-b border-gray-200 dark:border-gray-800">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Logo />
-            <p className="font-bold text-inherit">TBVision</p>
+            <p className="font-bold text-inherit font-sans">TBVision</p>
           </NextLink>
         </NavbarBrand>
       </NavbarContent>

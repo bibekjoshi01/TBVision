@@ -32,7 +32,7 @@ export function ProbabilityPie({ probabilities, prediction }: ProbabilityPieProp
   const textColor = getColor(prediction);
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-row items-center gap-3">
       <div className="relative w-[140px] h-[140px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -61,7 +61,7 @@ export function ProbabilityPie({ probabilities, prediction }: ProbabilityPieProp
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-x-3 gap-y-1 justify-center">
+      <div className="flex flex-col gap-x-3 gap-y-1 justify-center">
         {data.map(({ name, value }) => (
           <div key={name} className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full shrink-0" style={{ background: getColor(name) }} />
@@ -70,6 +70,7 @@ export function ProbabilityPie({ probabilities, prediction }: ProbabilityPieProp
           </div>
         ))}
       </div>
+
     </div>
   );
 }

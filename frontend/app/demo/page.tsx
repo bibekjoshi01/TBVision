@@ -3,7 +3,7 @@ import { title } from "@/components/primitives";
 export default function DemoPage() {
   return (
     <div className="flex flex-col items-center justify-center px-4">
-      <h1 className={title()}>Live Demo</h1>
+      <h1 className={title()}>Demo</h1>
       <p className="text-default-500 text-lg text-center max-w-2xl">
         Watch how TBVision AI analyzes chest radiographs in real-time.
       </p>

@@ -1,4 +1,4 @@
-import { API_BASE } from "@/lib/constansts";
+import { API_BASE } from "@/lib/constants";
 import type { PredictionResponse } from "@/types";
 
 export async function runPrediction(

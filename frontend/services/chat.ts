@@ -1,4 +1,4 @@
-import { API_BASE } from "@/lib/constansts";
+import { API_BASE } from "@/lib/constants";
 import type { RagResponse } from "@/types";
 
 export async function sendChatQuery(
