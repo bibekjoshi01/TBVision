@@ -6,9 +6,20 @@ This guide shows how to launch both the backend API and the frontend portal simu
 
 1. **Python & venv** – Python 3.11+ is required. Create/activate the `venv` in the repo root:
 
+   Create virtual env:
    ```bash
    python -m venv venv
+   ```
+
+   Activate virtual env:
+   For Unix/Linux/Mac:
+   ```bash
    source venv/bin/activate
+   ```
+
+   For Windows:
+   ```bash
+   .\venv\Scripts\activate
    ```
 
 2. **Dependencies** – Install backend and model requirements:
