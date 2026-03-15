@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from tbvision.app.core.config import Settings
+from tbvision.core.config import Settings
 
 
 logger = logging.getLogger(__name__)

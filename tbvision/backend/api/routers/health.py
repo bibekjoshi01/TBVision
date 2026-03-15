@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Request
 
-from tbvision.app.api.schemas import HealthResponse
+from tbvision.backend.api.schemas import HealthResponse
 
 router = APIRouter()
 

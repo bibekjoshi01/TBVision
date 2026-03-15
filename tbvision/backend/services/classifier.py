@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 import numpy as np
 
 from tbvision.xraytb_net.inference import ClassificationService
-from tbvision.app.core.config import Settings
+from tbvision.core.config import Settings
 
 
 logger = logging.getLogger(__name__)

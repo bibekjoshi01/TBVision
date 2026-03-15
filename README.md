@@ -22,17 +22,17 @@ Or install only the component you need:
 
 ## Backend inference service
 
-1. Ensure a trained checkpoint exists (e.g., `weights/ensemble-densenet121_best.pth`).
+1. Ensure a trained checkpoint exists (e.g., `weights/xraytb_net.pth`). Set `TBVISION_CHECKPOINT` if you store it elsewhere.
 2. Run the FastAPI server:
 
 ```bash
-TBVISION_CHECKPOINT=weights/ensemble-densenet121_best.pth \\
+TBVISION_CHECKPOINT=weights/xraytb_net.pth \\
 python -m uvicorn tbvision.backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 A bit of structure:
 
-- `tbvision/backend/core`: configuration helpers, logging setup, and environment-bound defaults.
+- `tbvision/core`: shared configuration helpers, logging setup, and environment-bound defaults.
 - `tbvision/backend/services`: image-decoding utilities plus the `ClassifierService` singleton that wraps `tbvision.xraytb_net.inference.ClassificationService`.
 - `tbvision/backend/api`: routers and schemas for `/health`, `/predict`, and `/rag`.
 - `tbvision/backend/knowledge`: a lightweight knowledge base that scores simple embeddings to power a retrieval endpoint (`/rag`).

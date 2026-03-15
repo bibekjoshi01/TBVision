@@ -2,8 +2,8 @@
 
 from fastapi import APIRouter, Request
 
-from tbvision.app.api.schemas import RAGRequest, RAGResponse
-from tbvision.app.services.rag import RAGService
+from tbvision.backend.api.schemas import RAGRequest, RAGResponse
+from tbvision.backend.services.rag import RAGService
 
 router = APIRouter()
 
