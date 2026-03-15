@@ -88,7 +88,7 @@ export default function ChatPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-3 max-w-lg mt-2">
               {[
-                "Summarize key radiograph findings",
+                "Summarize key x-ray findings",
                 "Explain cavitation characteristics",
                 "Assess miliary spread probability",
                 "Interpret activation maps"

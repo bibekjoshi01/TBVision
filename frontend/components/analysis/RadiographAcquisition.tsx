@@ -99,7 +99,7 @@ export function RadiographAcquisition({
               />
             </div>
             <p className="text-base font-bold text-default-600">
-              {isDragging ? "Release to upload" : "Drop radiograph or click to browse"}
+              {isDragging ? "Release to upload" : "Drop x-ray or click to browse"}
             </p>
             <p className="text-sm text-default-400">Accepted: JPG, JPEG, PNG</p>
           </div>

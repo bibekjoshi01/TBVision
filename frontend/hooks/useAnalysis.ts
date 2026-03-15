@@ -99,7 +99,7 @@ export function useAnalysis() {
 
   const onFormSubmit = async (data: any) => {
     if (!selectedFile) {
-      setError("Medical image (Radiograph) is required.");
+      setError("Medical image (X-Ray) is required.");
       return;
     }
     setIsAnalyzing(true);

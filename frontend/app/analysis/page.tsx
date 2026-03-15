@@ -31,7 +31,7 @@ export default function AnalysisPage() {
         <div className="flex flex-col gap-1">
           <span className="text-[10px] font-black text-primary uppercase tracking-[0.1em] mb-1">Next-Generation Analysis</span>
           <h1 className={title({ size: "md", class: "leading-tight" })}>
-            <strong>{viewState === "form" ? "Chest Radiography Analysis" : "Diagnostic Report"}</strong>
+            <strong>{viewState === "form" ? "Chest X-Ray Analysis" : "Diagnostic Report"}</strong>
           </h1>
           <p className="text-default-500 text-sm mt-1 font-medium">
             {viewState === "form"
