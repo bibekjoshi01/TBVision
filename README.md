@@ -1,64 +1,147 @@
-TBVision hosts a CXR tuberculosis classifier plus helpers for data prep, training, and inference.
+# 🫁 TB-Vision
 
-## Project layout
+### Explainable AI for Tuberculosis Screening in Resource-Limited Settings
 
-- `tbvision/xraytb_net/`: data preprocessing, model definitions, training loops, checkpoints, and evaluation helpers. Use the per-component requirements when working with the AI stack.
-- `tbvision/backend/`: FastAPI service that loads a checkpoint from `weights/` and exposes `/health` + `/predict` for frontend clients.
-- `tbvision/frontend/`: placeholder for the UI layer—add React/Vue/Svelte apps or Python dashboards (Streamlit/Gradio) here alongside their own dependencies.
+TB-Vision is a **clinical decision support system for tuberculosis screening** that combines lightweight deep learning models with explainable AI and intelligent validation. 
+The system is designed for **rural clinics and low-resource healthcare environments**, where radiologists and diagnostic infrastructure are limited.
 
-## Python dependencies
+Instead of relying solely on cloud AI, TB-Vision follows an **offline-first architecture**:
 
-Install everything with the aggregator:
+1️⃣ **Local CNN ensemble** analyzes chest X-rays  
+2️⃣ **Uncertainty estimation** determines prediction confidence  
+3️⃣ **Cloud validation** is triggered only for uncertain cases  
 
-```bash
-pip install -r requirements.txt
-```
+This hybrid design enables **fast, affordable, and scalable TB screening worldwide.**
 
-Or install only the component you need:
+---
 
-- `pip install -r tbvision/xraytb_net/requirements.txt` — training, evaluation, and inference utilities (torch, albumentations, etc.).
-- `pip install -r tbvision/backend/requirements.txt` — FastAPI, uvicorn, and multipart support (the AI stack is still required when you actually run the backend).
-- `pip install -r tbvision/frontend/requirements.txt` — add frontend-specific Python deps (e.g., Streamlit, Gradio) if applicable.
+### 🔗 Links
 
-## Backend inference service
+| Resource | Link |
+|--------|------|
+| Live Demo | https://tbvision.vercel.app |
+| Demo Video | https://youtu.be/... |
+| GitHub Repository | https://github.com/bibekjoshi01/TBVision |
 
-1. Ensure a trained checkpoint exists (e.g., `weights/xraytb_net.pth`). Set `TBVISION_CHECKPOINT` if you store it elsewhere.
-2. Run the FastAPI server:
+---
 
-```bash
-TBVISION_CHECKPOINT=weights/xraytb_net.pth \\
-python -m uvicorn tbvision.main:app --host 0.0.0.0 --port 8000 --reload
-```
+### 🧠 Core Idea
 
-A bit of structure:
+Most AI systems for medical imaging suffer from:
 
-- `tbvision/core`: shared configuration helpers, logging setup, and environment-bound defaults.
-- `tbvision/backend/services`: image-decoding utilities plus the `ClassifierService` singleton that wraps `tbvision.xraytb_net.inference.ClassificationService`.
-- `tbvision/backend/api`: routers and schemas for `/health`, `/predict`, and `/rag`.
-- `tbvision/backend/knowledge`: a lightweight knowledge base that scores simple embeddings to power a retrieval endpoint (`/rag`).
+- black-box predictions
+- overconfident outputs
+- lack of clinical context
+- dependence on cloud infrastructure
 
-### API endpoints
+TB-Vision solves these problems through:
 
-- `GET /health` — Reports whether the model is loaded, the checkpoint/device, and whether RAG is available.
-- `POST /predict` — Multipart/form-data request that must include:
+- **Explainable AI (Grad-CAM++)**
+- **Uncertainty-aware predictions**
+- **Offline-first deployment**
+- **Multi-stage AI validation**
 
-  - `image`: an image file (`image/png`, `image/jpeg`, etc.).
-  - `metadata` (optional): JSON string with auxiliary fields (patient ID, exam date, etc.).
+# 🚨 The Problem
 
-  Returns prediction, per-class probability distribution, raw logits, the label map, metadata echo, and the model config used.
-- `POST /rag` — Queries the lightweight knowledge base with `{"question": "...", "top_k": 3}` and returns the most relevant docs that can be stitched into responses (useful for explainability or follow-up details).
+Tuberculosis remains one of the deadliest infectious diseases worldwide.
 
-## Training & evaluation
+### Global Impact
+- **10.7 million cases** reported in 2024
+- **1.23 million deaths annually**
+- **2.4 million cases remain undiagnosed**
 
-Use the AI package entry points directly:
+### Healthcare Inequality
 
-```bash
-python -m tbvision.xraytb_net.training.train_classifier --data-dir dataset --save-dir weights
-python -m tbvision.xraytb_net.training.train_classifier --help  # for all CLI arguments
-```
+Many countries with the highest TB burden lack access to diagnostic radiology.
 
-For inference/evaluation utilities, import from `tbvision.xraytb_net.inference` (e.g., `ClassificationService` and `evaluate_model`).
+| Region | Radiologists per million |
+|------|------|
+| USA / Europe | 100+ |
+| Indonesia | <10 |
+| Pakistan | <8 |
+| Low-income regions | <2 |
 
-## Frontend
+Over **50% of the world's population lacks reliable diagnostic imaging access.**
 
-Place UI code inside `tbvision/frontend/`. The FastAPI `/predict` endpoint expects an image upload with optional metadata—use that contract to drive the visualization, patient summaries, or review tools you build on top of TBVision.
+### Why Current AI Solutions Fail
+
+Existing AI tools often fail in real clinical environments because they:
+
+- act as **black boxes**
+- produce **overconfident predictions**
+- require **constant internet connectivity**
+- are **too expensive for mass screening**
+
+This creates a critical need for an **affordable, explainable, and offline-capable TB screening system.**
+
+# 💡 Our Solution
+
+TB-Vision introduces a **hybrid AI screening system** that combines:
+
+- lightweight deep learning models
+- explainable AI
+- uncertainty-aware predictions
+- optional cloud validation
+
+### Key Principles
+
+**Offline First**
+
+The core CNN ensemble runs locally on basic computers without internet access.
+
+**Explainability**
+
+Grad-CAM++ highlights the lung regions influencing the AI decision.
+
+**Uncertainty Awareness**
+
+Monte-Carlo Dropout estimates prediction confidence and flags risky cases.
+
+**Intelligent Escalation**
+
+Only uncertain cases are forwarded to advanced AI models for deeper analysis.
+
+---
+
+### Screening Workflow
+
+1️⃣ Patient X-ray uploaded  
+2️⃣ CNN ensemble performs local prediction  
+3️⃣ Uncertainty score calculated  
+4️⃣ High-confidence cases resolved locally  
+5️⃣ Uncertain cases escalated for AI validation  
+
+# 🏗 System Architecture
+
+TB-Vision follows a **multi-stage AI pipeline**.
+
+### Stage 1 — Local CNN Ensemble
+Models used:
+
+- DenseNet121
+- EfficientNet-B3
+- ResNet50
+
+The ensemble improves robustness and reduces model bias.
+
+Outputs:
+
+- TB probability
+- prediction uncertainty
+- Grad-CAM heatmap
+
+---
+
+### Stage 2 — Uncertainty Estimation
+
+Monte-Carlo Dropout performs multiple forward passes to measure prediction confidence.
+
+This helps detect cases where the model may be unsure.
+
+---
+
+### Stage 3 — Intelligent AI Validation
+
+When uncertainty is high, the system can optionally use cloud AI models to validate findings and generate clinical explanations.
+
+This ensures **safety without requiring constant internet connectivity.**
