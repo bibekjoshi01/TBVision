@@ -1,0 +1,17 @@
+[
+  {
+    "id": "overview",
+    "text": "The xraytb_net model is a three-class CXR classifier that separates Normal, Other Disease, and TB states. It relies on an ensemble of backbones with dropout and allows Monte Carlo sampling via dropout layers when uncertainty is requested.",
+    "metadata": {"source": "architecture"}
+  },
+  {
+    "id": "input",
+    "text": "Upload a frontal chest x-ray image using the /predict endpoint together with optional metadata such as patient ID, exam date, or diagnostic notes. The service stores metadata alongside predictions for traceability.",
+    "metadata": {"source": "usage"}
+  },
+  {
+    "id": "backend",
+    "text": "The FastAPI backend loads the ensemble weights once during startup, runs predictions on CPU or CUDA as available, and exposes health, predict, and rag endpoints for clients.",
+    "metadata": {"source": "backend"}
+  }
+]

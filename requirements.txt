@@ -1,2 +1,2 @@
 -r backend/requirements.txt
--r ai_model/requirements.txt
+-r xraytb_net/requirements.txt

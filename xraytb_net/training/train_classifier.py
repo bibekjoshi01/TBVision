@@ -11,12 +11,12 @@ from torch.optim import AdamW, lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from ai_model.data_preparation.dataset import CXRDataset
-from ai_model.data_preparation.transforms import get_train_transforms, get_val_transforms
-from ai_model.models.classifier import TBClassifier
-from ai_model.models.ensemble import TBEnsemble
-from ai_model.inference.metrics import evaluate_model
-from ai_model.training.losses import FocalLoss
+from xraytb_net.data_preparation.dataset import CXRDataset
+from xraytb_net.data_preparation.transforms import get_train_transforms, get_val_transforms
+from xraytb_net.models.classifier import TBClassifier
+from xraytb_net.models.ensemble import TBEnsemble
+from xraytb_net.inference.metrics import evaluate_model
+from xraytb_net.training.losses import FocalLoss
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
