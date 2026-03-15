@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
+import { Input, Textarea } from "@heroui/input";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Image } from "@heroui/image";
@@ -74,7 +74,7 @@ export default function AnalysisPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 py-8">
+    <div className="flex flex-col gap-6 pb-8">
       <div>
         <h1 className={title({ size: "sm" })}>Analysis Workspace</h1>
         <p className="text-default-500 mt-2">Upload a chest X-ray and optionally provide patient metadata to begin AI analysis.</p>
@@ -83,12 +83,12 @@ export default function AnalysisPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Inputs */}
         <div className="flex flex-col gap-6 lg:col-span-1">
-          <Card className="p-2 shadow-sm border border-default-200" shadow="sm">
+          <Card className="p-2 shadow-sm border border-default-200">
             <CardHeader className="flex gap-3">
               <UploadCloud className="text-primary" />
               <div className="flex flex-col">
                 <p className="text-md font-semibold">Image Upload</p>
-                <p className="text-small text-default-500">Supported: JPG, PNG, DICOM</p>
+                <p className="text-small text-default-500">Supported: JPG, PNG</p>
               </div>
             </CardHeader>
             <Divider />
@@ -118,7 +118,7 @@ export default function AnalysisPage() {
             </CardBody>
           </Card>
 
-          <Card className="p-2 shadow-sm border border-default-200" shadow="sm">
+          <Card className="p-2 shadow-sm border border-default-200">
             <CardHeader className="flex gap-3">
               <FileText className="text-primary" />
               <div className="flex flex-col">
@@ -130,7 +130,12 @@ export default function AnalysisPage() {
             <CardBody className="flex flex-col gap-4">
               <Input label="Patient ID" placeholder="e.g. PID-12345" variant="bordered" />
               <Input label="Age" type="number" placeholder="e.g. 45" variant="bordered" />
-              <Input label="Clinical History" placeholder="Brief clinical notes..." variant="bordered" />
+              <Textarea 
+                label="Clinical History" 
+                placeholder="Brief clinical notes..." 
+                variant="bordered"
+                minRows={5}
+              />
               
               <Button 
                 color="primary" 
@@ -149,7 +154,7 @@ export default function AnalysisPage() {
         {/* Right Column: Outputs */}
         <div className="flex flex-col gap-6 lg:col-span-2">
            {results ? (
-             <Card className="p-2 shadow-sm border border-default-200 h-full" shadow="sm">
+             <Card className="p-2 shadow-sm border border-default-200 h-full">
                <CardHeader className="flex justify-between items-center">
                  <div className="flex flex-col">
                    <p className="text-lg font-semibold text-primary">Analysis Results</p>
