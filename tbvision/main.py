@@ -28,9 +28,8 @@ async def lifespan(app: FastAPI):
     retrieval_service = RetrievalService(settings, vector_db, embedding_service)
     generation_service = GenerationService(settings)
 
-    # Load models / indexes
+    # Load models
     classifier_service.load()
-    await retrieval_service.load()
 
     # Store in app state
     app.state.config = settings
