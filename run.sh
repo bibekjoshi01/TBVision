@@ -3,21 +3,12 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 export PYTHONPATH="$ROOT_DIR"
-BACKEND_CMD="python tbvision/run_backend.py"
-
-cleanup() {
-  if [[ -n "${BACKEND_PID:-}" && -e /proc/$BACKEND_PID ]]; then
-    kill "$BACKEND_PID" >/dev/null 2>&1 || true
-  fi
-}
-
-trap cleanup EXIT
+BACKEND_CMD="python -m uvicorn tbvision.main:app --reload"
 
 cd "$ROOT_DIR"
 
 # Start backend first so static folder and services initialize before the frontend consumes them.
 $BACKEND_CMD &
-BACKEND_PID=$!
 
 # Frontend setup
 cd "$ROOT_DIR/frontend"
