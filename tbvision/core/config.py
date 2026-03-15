@@ -37,15 +37,14 @@ class Settings(BaseSettings):
     qdrant_url: str | None = None
     rag_docs_path: Path = Field(default_factory=lambda: DEFAULT_KNOWLEDGE_DIR)
     knowledge_collection: str = Field("tbvision_knowledge")
+
     # Embeddings
     embedding_provider: str = "sentence_transformers"
     embedding_model: str = "all-MiniLM-L6-v2"
     embedding_dimension: int = 384
 
     # LLM
-    llm_provider: str = "gemini"
     gemini_api_key: SecretStr | None = None
-    local_llm_model: str | None = None
     mistral_api_key: SecretStr | None = None
 
     # Chunking

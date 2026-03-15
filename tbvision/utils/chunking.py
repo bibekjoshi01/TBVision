@@ -1,5 +1,7 @@
 import asyncio
 
+from langchain_classic.text_splitter import RecursiveCharacterTextSplitter
+
 
 async def chunk_text(
     content: str,
@@ -8,38 +10,35 @@ async def chunk_text(
     return_metadata: bool = False,
     document_id: str | None = None,
 ) -> list:
-    """
-    Async chunking helper splits content by character window.
-    """
 
     if chunk_size <= 0:
         raise ValueError("chunk_size must be positive")
     if chunk_overlap >= chunk_size:
         raise ValueError("chunk_overlap must be smaller than chunk_size")
 
-    def _sync_chunk() -> list:
-        results = []
-        step = chunk_size - chunk_overlap
-        start = 0
-        index = 0
-        while start < len(content):
-            end = min(len(content), start + chunk_size)
-            chunk = content[start:end]
-            if not chunk.strip():
-                start += step
-                continue
-            if return_metadata:
-                chunk_obj = {
-                    "chunk_index": index,
-                    "text": chunk,
-                    **({"syllabus_uuid": document_id} if document_id else {}),
-                }
-            else:
-                chunk_obj = chunk
-            results.append(chunk_obj)
-            index += 1
-            start += step
-        return results
+    def _sync_split() -> list:
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+        )
+        return splitter.split_text(content)
 
     loop = asyncio.get_running_loop()
-    return await loop.run_in_executor(None, _sync_chunk)
+    chunks = await loop.run_in_executor(None, _sync_split)
+
+    filtered = [chunk for chunk in chunks if chunk.strip()]
+    if not return_metadata:
+        return filtered
+
+    results = []
+    
+    for index, chunk in enumerate(filtered):
+        chunk_obj = {
+            "chunk_index": index,
+            "text": chunk,
+        }
+        if document_id:
+            chunk_obj["document_id"] = document_id
+        results.append(chunk_obj)
+    
+    return results

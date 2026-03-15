@@ -68,7 +68,7 @@ class PredictionResponse(BaseModel):
     metadata: Optional[PredictionMetadata] = None
     gradcam_region: Optional[str] = None
     gradcam_image: Optional[str] = None
-    evidence: List[Dict[str, Any]]
+    evidence: List[Dict[str, Any]] = Field(default_factory=list)
     explanation: str
 
 

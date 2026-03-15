@@ -1,9 +1,9 @@
 import logging
 import uuid
+from pathlib import Path
 from typing import Any
 
 from fastapi import UploadFile
-from qdrant_client.http.models import PointStruct
 
 from tbvision.adapters.embeddings.base import EmbeddingAdapter
 from tbvision.adapters.vector_db.base import VectorDBAdapter
@@ -26,10 +26,52 @@ class IngestionService:
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
 
+    async def _process_text(
+        self,
+        document_id: str,
+        text: str,
+        metadata: dict[str, Any] | None,
+        collection_name: str,
+    ):
+        if not text.strip():
+            logger.warning("Document %s contains no textual content.", document_id)
+            return
+
+        chunks = await chunk_text(
+            text,
+            chunk_size=self.chunk_size,
+            chunk_overlap=self.chunk_overlap,
+            return_metadata=True,
+            document_id=document_id,
+        )
+
+        if not chunks:
+            return
+
+        await self.vector_db.ensure_collection(collection_name)
+
+        texts = [chunk["text"] for chunk in chunks]
+        embeddings = await self.embedding_service.embed_texts(texts)
+
+        for chunk, embedding in zip(chunks, embeddings, strict=True):
+            chunk_id = f"{uuid.uuid4()}"
+            payload = {
+                "document_id": document_id,
+                "chunk_index": chunk["chunk_index"],
+                "content": chunk["text"],
+                **(metadata or {}),
+            }
+            await self.vector_db.store_embedding(
+                chunk_id,
+                list(embedding),
+                payload,
+                collection_name,
+            )
+
     async def ingest_document(
         self,
         document_id: str,
-        file: UploadFile,
+        file: UploadFile | Path | str,
         metadata: dict[str, Any] | None = None,
         collection_name: str = "default_documents",
     ):
@@ -49,55 +91,11 @@ class IngestionService:
         try:
             pages = await load_pdf(file)
             full_text = "\n".join(pages)
-        except Exception as e:
-            logger.exception(f"Error loading the PDF: {document_id}")
-            raise RuntimeError("Error loading the PDF") from e
+        except Exception as exc:
+            logger.exception("Error loading the PDF: %s", document_id)
+            raise RuntimeError("Error loading the PDF") from exc
 
-        # Split text into chunks
-        chunks = await chunk_text(
-            full_text,
-            chunk_size=self.chunk_size,
-            chunk_overlap=self.chunk_overlap,
-            return_metadata=True,
-            document_id=document_id,
-        )
-
-        # Generate embeddings in parallel and store in batches
-        EMBED_BATCH_SIZE = 32  # tune for CPU / RAM
-        UPSERT_BATCH_SIZE = 64  # tune for network
-        points_buffer: list[PointStruct] = []
-
-        await self.vector_db.ensure_collection(collection_name)
-
-        for i in range(0, len(chunks), EMBED_BATCH_SIZE):
-            batch_chunks = chunks[i : i + EMBED_BATCH_SIZE]
-            texts = [c["text"] for c in batch_chunks]
-
-            embeddings = await self.embedding_service.embed_texts(texts)
-
-            for chunk, embedding in zip(batch_chunks, embeddings, strict=True):
-                chunk_id = f"{uuid.uuid4()}"
-                payload = {
-                    "document_id": document_id,
-                    "chunk_index": chunk["chunk_index"],
-                    "content": chunk["text"],
-                    **(metadata or {}),
-                }
-
-                points_buffer.append(
-                    PointStruct(
-                        id=chunk_id,
-                        vector=embedding,
-                        payload=payload,
-                    )
-                )
-
-            if len(points_buffer) >= UPSERT_BATCH_SIZE:
-                await self.vector_db.upsert_points(points_buffer, collection_name)
-                points_buffer.clear()
-
-        if points_buffer:
-            await self.vector_db.upsert_points(points_buffer, collection_name)
+        await self._process_text(document_id, full_text, metadata, collection_name)
 
     async def delete_existing_syllabus(self, document_id: str, collection_name: str):
         """
