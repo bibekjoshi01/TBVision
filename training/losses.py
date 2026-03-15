@@ -31,18 +31,39 @@ class BCEDiceLoss(nn.Module):
 
 
 class FocalLoss(nn.Module):
-    def __init__(self, alpha=0.25, gamma=2):
+    """Multi-class focal loss built on top of CrossEntropy."""
+
+    def __init__(self, alpha=None, gamma=2.0, reduction="mean", ignore_index=None):
         super().__init__()
-        self.alpha = alpha
+        if alpha is not None:
+            alpha_tensor = torch.tensor(alpha, dtype=torch.float32)
+            self.register_buffer("alpha", alpha_tensor)
+        else:
+            self.alpha = None
         self.gamma = gamma
+        self.reduction = reduction
+        self.ignore_index = ignore_index
 
     def forward(self, logits, targets):
-        bce = F.binary_cross_entropy_with_logits(
-            logits, targets.unsqueeze(1), reduction="none"
+        weight = self.alpha
+        if weight is not None and weight.device != logits.device:
+            weight = weight.to(logits.device)
+
+        ce_loss = F.cross_entropy(
+            logits,
+            targets,
+            weight=weight,
+            reduction="none",
+            ignore_index=self.ignore_index,
         )
 
-        prob = torch.sigmoid(logits)
-        pt = targets.unsqueeze(1) * prob + (1 - targets.unsqueeze(1)) * (1 - prob)
-        loss = self.alpha * (1 - pt) ** self.gamma * bce
-        
-        return loss.mean()
+        probs = torch.softmax(logits, dim=1)
+        pt = probs.gather(1, targets.unsqueeze(1)).squeeze(1)
+        focal_factor = (1 - pt) ** self.gamma
+        loss = focal_factor * ce_loss
+
+        if self.reduction == "mean":
+            return loss.mean()
+        elif self.reduction == "sum":
+            return loss.sum()
+        return loss
