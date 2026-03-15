@@ -1,4 +1,5 @@
 """Wrapper around the AI model for dependency injection."""
+
 import logging
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -6,14 +7,14 @@ from typing import Dict, List, Optional
 import numpy as np
 
 from xraytb_net.inference import ClassificationService
-from ..core.config import AppConfig
+from ..core.config import Settings
 
 
 logger = logging.getLogger(__name__)
 
 
 class ClassifierService:
-    def __init__(self, config: AppConfig):
+    def __init__(self, config: Settings):
         self.config = config
         self._service: Optional[ClassificationService] = None
 

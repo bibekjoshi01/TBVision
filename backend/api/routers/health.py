@@ -1,7 +1,8 @@
 """Health endpoints for the API."""
+
 from fastapi import APIRouter, Request
 
-from ..schemas import HealthResponse
+from api.schemas import HealthResponse
 
 router = APIRouter()
 

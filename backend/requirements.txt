@@ -1,5 +1,12 @@
-fastapi>=0.110.0
-uvicorn[standard]>=0.23.0
+# Web framework
+fastapi==0.134.0
+uvicorn==0.41.0
+
+# Configuration management
+pydantic==2.12.5
+pydantic-settings==2.13.1
+python-dotenv==1.2.1
+
 python-multipart
 numpy
 opencv-python

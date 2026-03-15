@@ -1,12 +1,13 @@
 """Endpoints for running model predictions."""
+
 import json
 from typing import Optional
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 
-from ..schemas import PredictionResponse
-from ...services.classifier import ClassifierService
-from ...services.image import content_type_is_image, decode_upload_image
+from api.schemas import PredictionResponse
+from services.classifier import ClassifierService
+from services.image import content_type_is_image, decode_upload_image
 
 router = APIRouter()
 
@@ -29,9 +30,13 @@ async def predict(
         try:
             parsed_metadata = json.loads(metadata)
         except json.JSONDecodeError as exc:
-            raise HTTPException(status_code=400, detail=f"metadata must be valid JSON: {exc}")
+            raise HTTPException(
+                status_code=400, detail=f"metadata must be valid JSON: {exc}"
+            )
         if not isinstance(parsed_metadata, dict):
-            raise HTTPException(status_code=400, detail="metadata must be a JSON object")
+            raise HTTPException(
+                status_code=400, detail="metadata must be a JSON object"
+            )
 
     return PredictionResponse(
         prediction=raw["prediction"],
@@ -39,7 +44,7 @@ async def predict(
         raw_logits=raw["raw_logits"],
         label_map=classifier_service.label_map,
         metadata=parsed_metadata,
-        model_config={
+        config_snapshot={
             "checkpoint": str(request.app.state.config.checkpoint_path),
             "image_size": request.app.state.config.image_size,
             "mode": request.app.state.config.mode,
