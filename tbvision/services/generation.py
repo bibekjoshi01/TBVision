@@ -119,10 +119,9 @@ class GenerationService:
             ]
             if part
         )
-        evidence_summary = (
-            report_context.get("evidence_summary")
-            or self._summarize_evidence(analysis.get("evidence", []))
-        )
+        evidence_summary = report_context.get(
+            "evidence_summary"
+        ) or self._summarize_evidence(analysis.get("evidence", []))
         uncertainty_note = self._build_uncertainty_note(report_context, analysis)
         history_text = self._format_history(history)
 
@@ -172,9 +171,7 @@ class GenerationService:
         for entry in evidence_list[:3]:
             text = entry.get("text", "").replace("\n", " ").strip()
             header = (
-                entry.get("metadata", {}).get("title")
-                or entry.get("id")
-                or "Evidence"
+                entry.get("metadata", {}).get("title") or entry.get("id") or "Evidence"
             )
             if text:
                 excerpts.append(f"{header}: {text}")
@@ -182,18 +179,24 @@ class GenerationService:
 
     def _format_history(self, history: Iterable[Dict[str, str]]) -> str:
         if not history:
-        return "None"
+            return "None"
+        lines = [
+            f"Q: {entry['question']}\nA: {entry['answer']}"
+            for entry in history
+            if entry.get("question") and entry.get("answer")
+        ]
+        return "\n".join(lines) or "None"
 
     def _build_uncertainty_note(
         self,
         report_context: Dict[str, Any],
         analysis: dict[str, Any],
     ) -> str:
-        level = report_context.get("uncertainty_level") or analysis.get("uncertainty_level")
-        std = report_context.get("uncertainty_std") or analysis.get("uncertainty_std")
-        std_display = (
-            f"{std:.2f}" if isinstance(std, (int, float)) else "N/A"
+        level = report_context.get("uncertainty_level") or analysis.get(
+            "uncertainty_level"
         )
+        std = report_context.get("uncertainty_std") or analysis.get("uncertainty_std")
+        std_display = f"{std:.2f}" if isinstance(std, (int, float)) else "N/A"
         note_parts = []
         if level:
             note_parts.append(f"Reported uncertainty level: {level}.")
@@ -209,11 +212,6 @@ class GenerationService:
                 "Uncertainty is within tolerable bounds; proceed with standard follow-up."
             )
         return " ".join(note_parts)
-        return "\n".join(
-            f"Q: {entry['question']}\nA: {entry['answer']}"
-            for entry in history
-            if entry.get("question") and entry.get("answer")
-        ) or "None"
 
     @staticmethod
     def summarize_evidence(documents: Iterable[Dict[str, Any]]) -> str:
