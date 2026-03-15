@@ -2,11 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from tbvision.backend.api.routes import api_router
+from tbvision.api.routes import api_router
 from tbvision.core.config import get_settings
 from tbvision.core.logging import configure_logging
-from tbvision.backend.services.rag import RAGService
-from tbvision.backend.services.classifier import ClassifierService
+from tbvision.services.rag import RAGService
+from tbvision.services.classifier import ClassifierService
 
 settings = get_settings()
 

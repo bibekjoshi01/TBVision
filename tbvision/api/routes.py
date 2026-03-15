@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from tbvision.backend.api.routers import health, predict, rag
+from tbvision.api.routers import health, predict, rag
 
 api_router = APIRouter()
 

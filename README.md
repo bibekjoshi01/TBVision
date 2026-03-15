@@ -27,7 +27,7 @@ Or install only the component you need:
 
 ```bash
 TBVISION_CHECKPOINT=weights/xraytb_net.pth \\
-python -m uvicorn tbvision.backend.main:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn tbvision.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 A bit of structure:
