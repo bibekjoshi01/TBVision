@@ -60,6 +60,7 @@ export interface PredictionResponse {
   gradcam_region?: string;
   summary?: string;
   explanation?: string;
+  report_id?: string;
   metadata: PredictionMetadata;
   evidence?: EvidenceItem[];
 }
@@ -89,4 +90,26 @@ export interface RagDocument {
 export interface RagResponse {
   documents?: RagDocument[];
   [key: string]: unknown;
+}
+
+// ---------------------------------------------------------------------------
+// Follow-up API response
+// ---------------------------------------------------------------------------
+
+export interface FollowUpHistoryEntry {
+  question: string;
+  answer: string;
+  created_at: string;
+}
+
+export interface FollowUpResponse {
+  report_id: string;
+  question: string;
+  answer: string;
+  history: FollowUpHistoryEntry[];
+}
+
+export interface FollowUpHistoryResponse {
+  report_id: string;
+  history: FollowUpHistoryEntry[];
 }

@@ -167,7 +167,7 @@ export function DiagnosticReport({ results, previewUrl }: DiagnosticReportProps)
       )}
 
       {/* 7. Embedded Chat Section */}
-      <ChatSection />
+      <ChatSection reportId={results.report_id} />
     </div>
   );
 }

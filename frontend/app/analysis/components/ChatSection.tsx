@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Send, Info } from "lucide-react";
+import { Send, Info, Copy, Check } from "lucide-react";
 import { Button } from "@heroui/button";
 import { Textarea } from "@heroui/input";
 import { ScrollShadow } from "@heroui/scroll-shadow";
 import clsx from "clsx";
-import { sendChatQuery } from "@/services/chat";
+import { fetchFollowUpHistory, sendFollowUp } from "@/services/chat";
+import type { FollowUpHistoryEntry } from "@/types";
+import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 
 interface Message {
   id: string;
@@ -15,10 +17,32 @@ interface Message {
   timestamp: Date;
 }
 
-export default function ChatSection() {
+function historyToMessages(history: FollowUpHistoryEntry[]): Message[] {
+  return history.flatMap((entry, index) => {
+    const timestamp = new Date(entry.created_at || Date.now());
+    const safeTime = Number.isNaN(timestamp.getTime()) ? new Date() : timestamp;
+    return [
+      {
+        id: `${index}-q`,
+        role: "user" as const,
+        content: entry.question,
+        timestamp: safeTime,
+      },
+      {
+        id: `${index}-a`,
+        role: "assistant" as const,
+        content: entry.answer,
+        timestamp: safeTime,
+      },
+    ];
+  });
+}
+
+export default function ChatSection({ reportId }: { reportId?: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom
@@ -28,8 +52,37 @@ export default function ChatSection() {
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (!reportId) return;
+    let isActive = true;
+    fetchFollowUpHistory(reportId)
+      .then((data) => {
+        if (!isActive) return;
+        setMessages(historyToMessages(data.history || []));
+      })
+      .catch((error) => {
+        console.error("Failed to load follow-up history:", error);
+      });
+    return () => {
+      isActive = false;
+    };
+  }, [reportId]);
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
+    if (!reportId) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `${Date.now()}-error`,
+          role: "assistant",
+          content:
+            "Report context is not ready yet. Please generate a diagnostic report first.",
+          timestamp: new Date(),
+        },
+      ]);
+      return;
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -43,24 +96,8 @@ export default function ChatSection() {
     setIsLoading(true);
 
     try {
-      const data = await sendChatQuery(userMessage.content, 3);
-
-      let botContent = "";
-      if (data.documents && data.documents.length > 0) {
-        botContent = data.documents[0].text;
-      } else {
-        botContent =
-          "No specific clinical match found. Please review the diagnostic report for detailed activation maps and pathological assessment.";
-      }
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: botContent,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      const data = await sendFollowUp(reportId, userMessage.content);
+      setMessages(historyToMessages(data.history || []));
     } catch (error) {
       console.error("Chat error:", error);
       const errorMessage: Message = {
@@ -73,6 +110,16 @@ export default function ChatSection() {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCopy = async (id: string, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (error) {
+      console.error("Copy failed:", error);
     }
   };
 
@@ -131,14 +178,33 @@ export default function ChatSection() {
                       : "text-default-900 py-1"
                   )}
                 >
-                  {msg.content}
+                  <MarkdownRenderer content={msg.content} />
                 </div>
-                <p className="text-[9px] font-medium text-default-500 uppercase tracking-tight px-1">
-                  {msg.timestamp.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
+                <div
+                  className={clsx(
+                    "flex items-center gap-2",
+                    msg.role === "user" ? "justify-end" : "justify-start"
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(msg.id, msg.content)}
+                    className="text-default-400 hover:text-default-700 transition"
+                    aria-label="Copy message"
+                  >
+                    {copiedId === msg.id ? (
+                      <Check size={14} className="text-success" />
+                    ) : (
+                      <Copy size={14} />
+                    )}
+                  </button>
+                  <p className="text-[9px] font-medium text-default-500 uppercase tracking-tight px-1">
+                    {msg.timestamp.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
               </div>
             </div>
           ))
