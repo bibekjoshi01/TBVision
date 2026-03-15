@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     qdrant_url: str | None = None
     rag_docs_path: Path = Field(default_factory=lambda: DEFAULT_KNOWLEDGE_DIR)
     knowledge_collection: str = Field("tbvision_knowledge")
+    context_db_path: Path = Field(
+        default_factory=lambda: ROOT_DIR / "tbvision" / "reports.db"
+    )
 
     # Embeddings
     embedding_provider: str = "sentence_transformers"
@@ -65,6 +68,7 @@ class Settings(BaseSettings):
         "checkpoint_path",
         "rag_docs_path",
         "media_root",
+        "context_db_path",
         mode="before",
     )
     @classmethod

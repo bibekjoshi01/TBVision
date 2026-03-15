@@ -66,6 +66,7 @@ class PredictionResponse(BaseModel):
     uncertainty_std: float
     uncertainty_level: str
     metadata: Optional[PredictionMetadata] = None
+    report_id: Optional[str] = None
     gradcam_region: Optional[str] = None
     gradcam_image: Optional[str] = None
     evidence: List[Dict[str, Any]] = Field(default_factory=list)
@@ -87,3 +88,21 @@ class RAGRequest(BaseModel):
 class RAGResponse(BaseModel):
     question: str
     documents: List[RAGDocument]
+
+
+class FollowUpHistoryEntry(BaseModel):
+    question: str
+    answer: str
+    created_at: str
+
+
+class FollowUpRequest(BaseModel):
+    report_id: str = Field(..., min_length=8)
+    question: str = Field(..., min_length=5)
+
+
+class FollowUpResponse(BaseModel):
+    report_id: str
+    question: str
+    answer: str
+    history: List[FollowUpHistoryEntry]

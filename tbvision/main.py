@@ -10,6 +10,7 @@ from tbvision.core.dependencies import get_embedding_service, get_vector_db
 from tbvision.core.logging import configure_logging
 from tbvision.services.classifier import ClassifierService
 from tbvision.services.generation import GenerationService
+from tbvision.services.report_store import ReportStore
 from tbvision.services.retrieval import RetrievalService
 
 settings = get_settings()
@@ -27,6 +28,7 @@ async def lifespan(app: FastAPI):
     embedding_service = get_embedding_service()
     retrieval_service = RetrievalService(settings, vector_db, embedding_service)
     generation_service = GenerationService(settings)
+    report_store = ReportStore(settings.context_db_path)
 
     # Load models
     classifier_service.load()
@@ -36,6 +38,7 @@ async def lifespan(app: FastAPI):
     app.state.classifier_service = classifier_service
     app.state.retrieval_service = retrieval_service
     app.state.generation_service = generation_service
+    app.state.report_store = report_store
 
     yield  # App runs here
 
