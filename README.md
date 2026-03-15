@@ -40,3 +40,36 @@ TB-Vision solves these problems through:
 - **Uncertainty-aware predictions**
 - **Offline-first deployment**
 - **Multi-stage AI validation**
+
+# 🚨 The Problem
+
+Tuberculosis remains one of the deadliest infectious diseases worldwide.
+
+### Global Impact
+- **10.7 million cases** reported in 2024
+- **1.23 million deaths annually**
+- **2.4 million cases remain undiagnosed**
+
+### Healthcare Inequality
+
+Many countries with the highest TB burden lack access to diagnostic radiology.
+
+| Region | Radiologists per million |
+|------|------|
+| USA / Europe | 100+ |
+| Indonesia | <10 |
+| Pakistan | <8 |
+| Low-income regions | <2 |
+
+Over **50% of the world's population lacks reliable diagnostic imaging access.**
+
+### Why Current AI Solutions Fail
+
+Existing AI tools often fail in real clinical environments because they:
+
+- act as **black boxes**
+- produce **overconfident predictions**
+- require **constant internet connectivity**
+- are **too expensive for mass screening**
+
+This creates a critical need for an **affordable, explainable, and offline-capable TB screening system.**
