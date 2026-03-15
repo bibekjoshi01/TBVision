@@ -39,3 +39,4 @@ batch_temp/
 *.log
 
 weights/
+dataset/
