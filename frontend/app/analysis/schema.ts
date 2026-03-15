@@ -45,7 +45,8 @@ export interface PredictionResponse {
   uncertainty_level: string;
   gradcam_image?: string;
   gradcam_region?: string;
-  summary: string;
+  summary?: string;
+  explanation?: string;
   metadata: any;
   evidence?: Array<{
     label: string;

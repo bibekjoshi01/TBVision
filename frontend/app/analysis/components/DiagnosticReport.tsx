@@ -8,6 +8,7 @@ import { Chip as UIChip } from "@heroui/chip";
 import NextLink from "next/link";
 import type { PredictionResponse } from "../schema";
 import { ProbabilityPie } from "./ProbabilityPie";
+import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 
 const Progress = UIProgress as any;
 const Chip = UIChip as any;
@@ -18,6 +19,9 @@ interface DiagnosticReportProps {
 }
 
 export function DiagnosticReport({ results, previewUrl }: DiagnosticReportProps) {
+  const reportContent = results.explanation?.trim();
+  const evidence = results.evidence || [];
+
   return (
     <div id="report-content" className="space-y-8 animate-in fade-in duration-500">
       {/* 1. Report Header Card */}
@@ -115,23 +119,55 @@ export function DiagnosticReport({ results, previewUrl }: DiagnosticReportProps)
         </Card>
 
       {/* 5. Medical Summary & Insights Card */}
-      {results.summary && (
+      {reportContent && (
         <Card className="shadow-none border border-default-200">
           <CardBody className="p-8">
             <div className="space-y-4 text-left">
               <div className="space-y-2 mb-2">
-                <p className="text-sm font-black text-default-800 uppercase tracking-wider underline underline-offset-4 decoration-primary decoration-2">4. Medical Summary & Insights</p>
+                <p className="text-sm font-black text-default-800 uppercase tracking-wider">Medical Summary & Insights</p>
                 <p className="text-xs text-default-600 font-semibold leading-relaxed">Automated synthesis of model results and clinical domain knowledge.</p>
               </div>
-              <div className="p-6 bg-primary/5 border border-primary/10 rounded-2xl text-base leading-relaxed text-default-900 shadow-sm font-medium border-l-4 border-l-primary">
-                {results.summary}
+                <MarkdownRenderer content={reportContent} />
+            </div>
+          </CardBody>
+        </Card>
+      )}
+
+      {/* 6. Evidence Card */}
+      {evidence.length > 0 && (
+        <Card className="shadow-none border border-default-200">
+          <CardBody className="p-8">
+            <div className="space-y-4 text-left">
+              <div className="space-y-2 mb-2">
+                <p className="text-sm font-black text-default-800 uppercase tracking-wider">Evidence</p>
+                <p className="text-xs text-default-600 font-semibold leading-relaxed">Key model signals supporting this assessment.</p>
+              </div>
+              <div className="space-y-3">
+                {evidence.map((item, index) => (
+                  <div
+                    key={`${item.label}-${index}`}
+                    className="p-4 rounded-xl border border-default-200 bg-default-50"
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="text-sm font-bold text-default-800">{item.label}</p>
+                      <Chip size="md" variant="flat" color="primary" className="text-xs font-bold">
+                        {(item.score * 100).toFixed(1)}%
+                      </Chip>
+                    </div>
+                    {item.description && (
+                      <p className="mt-2 text-sm text-default-600 leading-relaxed">
+                        {item.description}
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </CardBody>
         </Card>
       )}
 
-      {/* 6. AI Chat CTA Card */}
+      {/* 7. AI Chat CTA Card */}
       <Card className="shadow-none border border-primary/20 bg-primary/5 no-print">
         <CardBody className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">

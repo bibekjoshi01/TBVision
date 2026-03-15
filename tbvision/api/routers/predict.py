@@ -33,17 +33,18 @@ async def predict(
     if metadata:
         try:
             metadata_dict = json.loads(metadata)
-            parsed_metadata = PredictionMetadata.model_validate_json(metadata_dict)
         except json.JSONDecodeError as exc:
             raise HTTPException(
                 status_code=400, detail=f"metadata must be valid JSON: {exc}"
             )
-        except ValidationError as exc:
-            raise HTTPException(status_code=422, detail=exc.errors())
-        if not isinstance(parsed_metadata, dict):
+        if not isinstance(metadata_dict, dict):
             raise HTTPException(
                 status_code=400, detail="metadata must be a JSON object"
             )
+        try:
+            parsed_metadata = PredictionMetadata.model_validate(metadata_dict)
+        except ValidationError as exc:
+            raise HTTPException(status_code=422, detail=exc.errors())
 
     # Generating the image analysis using baseline model and online llm
     analyzer = Analyzer(
