@@ -2,7 +2,7 @@ import asyncio
 
 from mistralai import Mistral
 
-from app.adapters.llm.base import LLMAdapter
+from tbvision.adapters.llm.base import LLMAdapter
 
 
 class MistralAdapter(LLMAdapter):

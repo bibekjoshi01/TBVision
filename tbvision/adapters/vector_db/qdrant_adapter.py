@@ -15,7 +15,7 @@ from qdrant_client.models import (
     NestedCondition,
 )
 
-from app.adapters.vector_db.base import VectorDBAdapter
+from tbvision.adapters.vector_db.base import VectorDBAdapter
 
 
 class QdrantAdapter(VectorDBAdapter):

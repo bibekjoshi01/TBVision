@@ -2,7 +2,7 @@ import asyncio
 
 from google import genai  # type: ignore[import, attr-defined]
 
-from app.adapters.llm.base import LLMAdapter
+from tbvision.adapters.llm.base import LLMAdapter
 
 
 class GeminiAdapter(LLMAdapter):

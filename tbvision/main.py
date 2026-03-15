@@ -6,9 +6,11 @@ from fastapi.staticfiles import StaticFiles
 
 from tbvision.api.routes import api_router
 from tbvision.core.config import get_settings
+from tbvision.core.dependencies import get_embedding_service, get_vector_db
 from tbvision.core.logging import configure_logging
-from tbvision.services.rag import RAGService
 from tbvision.services.classifier import ClassifierService
+from tbvision.services.generation import GenerationService
+from tbvision.services.retrieval import RetrievalService
 
 settings = get_settings()
 settings.media_root.mkdir(parents=True, exist_ok=True)
@@ -21,16 +23,20 @@ async def lifespan(app: FastAPI):
 
     # Initialize services
     classifier_service = ClassifierService(settings)
-    rag_service = RAGService(settings)
+    vector_db = get_vector_db()
+    embedding_service = get_embedding_service()
+    retrieval_service = RetrievalService(settings, vector_db, embedding_service)
+    generation_service = GenerationService(settings)
 
     # Load models / indexes
     classifier_service.load()
-    rag_service.load()
+    await retrieval_service.load()
 
     # Store in app state
     app.state.config = settings
     app.state.classifier_service = classifier_service
-    app.state.rag_service = rag_service
+    app.state.retrieval_service = retrieval_service
+    app.state.generation_service = generation_service
 
     yield  # App runs here
 

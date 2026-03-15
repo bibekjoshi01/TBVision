@@ -2,7 +2,7 @@ import asyncio
 
 from sentence_transformers import SentenceTransformer  # type: ignore[import]
 
-from app.adapters.embeddings.base import EmbeddingAdapter
+from tbvision.adapters.embeddings.base import EmbeddingAdapter
 
 
 class SentenceTransformersAdapter(EmbeddingAdapter):

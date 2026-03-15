@@ -2,7 +2,7 @@ import asyncio
 
 from transformers import pipeline  # type: ignore[import]
 
-from app.adapters.llm.base import LLMAdapter
+from tbvision.adapters.llm.base import LLMAdapter
 
 
 class LocalAdapter(LLMAdapter):

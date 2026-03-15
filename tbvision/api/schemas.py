@@ -24,9 +24,8 @@ class PredictionResponse(BaseModel):
     metadata: Optional[Dict[str, Any]] = None
     gradcam_region: Optional[str] = None
     gradcam_image: Optional[str] = None
-    mode: str
     evidence: List[Dict[str, Any]]
-    explanation: Dict[str, Any]
+    explanation: str
 
 
 class RAGDocument(BaseModel):

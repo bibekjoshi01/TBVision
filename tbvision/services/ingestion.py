@@ -20,13 +20,11 @@ class IngestionService:
         embedding_service: EmbeddingAdapter,
         chunk_size: int,
         chunk_overlap: int,
-        chunk_method: str = "recursive",
     ):
         self.vector_db = vector_db
         self.embedding_service = embedding_service
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
-        self.chunk_method = chunk_method
 
     async def ingest_document(
         self,
@@ -60,7 +58,6 @@ class IngestionService:
             full_text,
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
-            method=self.chunk_method,
             return_metadata=True,
             document_id=document_id,
         )

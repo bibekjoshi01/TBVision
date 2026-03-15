@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 DEFAULT_CHECKPOINT = ROOT_DIR / "weights" / "xraytb_net.pth"
-DEFAULT_RAG_DOCS = ROOT_DIR / "tbvision" / "backend" / "knowledge"
+DEFAULT_KNOWLEDGE_DIR = ROOT_DIR / "tbvision" / "knowledge"
 
 
 class Settings(BaseSettings):
@@ -35,8 +35,8 @@ class Settings(BaseSettings):
 
     # Vector DB
     qdrant_url: str | None = None
-    rag_docs_path: Path = Field(default_factory=lambda: DEFAULT_RAG_DOCS)
-
+    rag_docs_path: Path = Field(default_factory=lambda: DEFAULT_KNOWLEDGE_DIR)
+    knowledge_collection: str = Field("tbvision_knowledge")
     # Embeddings
     embedding_provider: str = "sentence_transformers"
     embedding_model: str = "all-MiniLM-L6-v2"
@@ -62,7 +62,12 @@ class Settings(BaseSettings):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
-    @field_validator("checkpoint_path", "rag_docs_path", "media_root", mode="before")
+    @field_validator(
+        "checkpoint_path",
+        "rag_docs_path",
+        "media_root",
+        mode="before",
+    )
     @classmethod
     def resolve_paths(cls, value):
         return Path(value).expanduser()

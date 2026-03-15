@@ -16,5 +16,5 @@ def health(request: Request):
         status="ok" if classifier_service.ready else "loading",
         checkpoint=str(config.checkpoint_path),
         device=classifier_service.device,
-        rag_enabled=request.app.state.rag_service.available(),
+        rag_enabled=request.app.state.retrieval_service.available(),
     )

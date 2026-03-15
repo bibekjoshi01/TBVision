@@ -42,13 +42,20 @@ async def predict(
 
     # Generating the image analysis using baseline model and online llm
     analyzer = Analyzer(
-        image=decoded, classifier_service=classifier_service, metadata=metadata
+        image=decoded,
+        settings=request.app.state.config,
+        classifier_service=classifier_service,
+        retrieval_service=request.app.state.retrieval_service,
+        generation_service=request.app.state.generation_service,
+        metadata=parsed_metadata or {},
     )
-    pred_data = analyzer.analyze()
+    pred_data = await analyzer.analyze()
 
     gradcam_url = pred_data.get("gradcam_image")
     if gradcam_url and not gradcam_url.startswith("http"):
-        pred_data["gradcam_image"] = urljoin(str(request.base_url), gradcam_url.lstrip("/"))
+        pred_data["gradcam_image"] = urljoin(
+            str(request.base_url), gradcam_url.lstrip("/")
+        )
 
     return PredictionResponse(
         label_map=classifier_service.label_map,
