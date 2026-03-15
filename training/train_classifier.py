@@ -6,7 +6,8 @@ import sys
 
 import numpy as np
 import torch
-from torch import autocast, GradScaler
+from torch.amp import autocast
+from torch.cuda.amp import GradScaler
 from torch.optim import AdamW, lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -226,7 +227,7 @@ def train(args):
 
             optimizer.zero_grad()
 
-            with autocast(enabled=(DEVICE == "cuda")):
+            with autocast("cuda", enabled=(DEVICE == "cuda")):
                 logits = model(images)
                 loss = loss_fn(logits, labels)
 

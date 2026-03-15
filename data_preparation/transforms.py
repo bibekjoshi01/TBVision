@@ -14,7 +14,12 @@ def get_train_transforms(size=224):
     height, width = _normalize_size(size)
     return A.Compose(
         [
-            A.RandomResizedCrop(height=height, width=width, scale=(0.85, 1.0), p=0.8),
+            A.RandomResizedCrop(
+                size=(height, width),
+                scale=(0.85, 1.0),
+                ratio=(0.75, 1.333),
+                p=0.8,
+            ),
             A.HorizontalFlip(p=0.5),
             A.Rotate(limit=15, p=0.7),
             A.RandomBrightnessContrast(0.2, 0.2, p=0.5),

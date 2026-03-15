@@ -33,10 +33,13 @@ class BCEDiceLoss(nn.Module):
 class FocalLoss(nn.Module):
     """Multi-class focal loss built on top of CrossEntropy."""
 
-    def __init__(self, alpha=None, gamma=2.0, reduction="mean", ignore_index=None):
+    def __init__(self, alpha=None, gamma=2.0, reduction="mean", ignore_index=-100):
         super().__init__()
         if alpha is not None:
-            alpha_tensor = torch.tensor(alpha, dtype=torch.float32)
+            if torch.is_tensor(alpha):
+                alpha_tensor = alpha.clone().detach().to(torch.float32)
+            else:
+                alpha_tensor = torch.tensor(alpha, dtype=torch.float32)
             self.register_buffer("alpha", alpha_tensor)
         else:
             self.alpha = None
