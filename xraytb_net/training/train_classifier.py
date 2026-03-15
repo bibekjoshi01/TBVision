@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +11,10 @@ from torch.cuda.amp import GradScaler
 from torch.optim import AdamW, lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.append(str(ROOT_DIR))
 
 from xraytb_net.data_preparation.dataset import CXRDataset
 from xraytb_net.data_preparation.transforms import get_train_transforms, get_val_transforms
