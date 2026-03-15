@@ -5,6 +5,7 @@ from typing import Optional
 from urllib.parse import urljoin
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+from pydantic import ValidationError
 
 from tbvision.api.schemas import PredictionResponse, PredictionMetadata
 from tbvision.services.classifier import ClassifierService
@@ -18,7 +19,7 @@ router = APIRouter()
 async def predict(
     request: Request,
     image: UploadFile = File(...),
-    metadata: Optional[PredictionMetadata] = Form(None),
+    metadata: Optional[str] = Form(None),
 ):
     if not image.content_type or not content_type_is_image(image.content_type):
         raise HTTPException(status_code=400, detail="Uploaded file must be an image")
@@ -27,14 +28,18 @@ async def predict(
     decoded = await decode_upload_image(image)
 
     # Parsing the metadata like symptoms
-    parsed_metadata = None
+    parsed_metadata: PredictionMetadata | None = None
+
     if metadata:
         try:
-            parsed_metadata = json.loads(metadata)
+            metadata_dict = json.loads(metadata)
+            parsed_metadata = PredictionMetadata.model_validate_json(metadata_dict)
         except json.JSONDecodeError as exc:
             raise HTTPException(
                 status_code=400, detail=f"metadata must be valid JSON: {exc}"
             )
+        except ValidationError as exc:
+            raise HTTPException(status_code=422, detail=exc.errors())
         if not isinstance(parsed_metadata, dict):
             raise HTTPException(
                 status_code=400, detail="metadata must be a JSON object"
