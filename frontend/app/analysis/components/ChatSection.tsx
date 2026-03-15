@@ -15,7 +15,7 @@ interface Message {
   timestamp: Date;
 }
 
-export default function ChatPage() {
+export default function ChatSection() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +49,8 @@ export default function ChatPage() {
       if (data.documents && data.documents.length > 0) {
         botContent = data.documents[0].text;
       } else {
-        botContent = "No specific clinical match found. Please review the diagnostic report for detailed activation maps and pathological assessment.";
+        botContent =
+          "No specific clinical match found. Please review the diagnostic report for detailed activation maps and pathological assessment.";
       }
 
       const assistantMessage: Message = {
@@ -65,7 +66,8 @@ export default function ChatPage() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Error connecting to the clinical analysis service. Ensure the diagnostic server is running.",
+        content:
+          "Error connecting to the clinical analysis service. Ensure the diagnostic server is running.",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -80,7 +82,10 @@ export default function ChatPage() {
       <header className="px-4 py-4 border-b border-default-100 flex items-center justify-between" />
 
       {/* Focused Chat Area */}
-      <ScrollShadow className="flex-1 px-4 py-8 space-y-10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" ref={scrollRef}>
+      <ScrollShadow
+        className="flex-1 px-4 py-8 space-y-10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        ref={scrollRef}
+      >
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in duration-700">
             <p className="text-xs font-bold text-default-500 uppercase tracking-wider">
@@ -88,10 +93,10 @@ export default function ChatPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-3 max-w-lg mt-2">
               {[
-                "Summarize key x-ray findings",
+                "Summarize key radiograph findings",
                 "Explain cavitation characteristics",
                 "Assess miliary spread probability",
-                "Interpret activation maps"
+                "Interpret activation maps",
               ].map((query, i) => (
                 <button
                   key={i}
@@ -112,20 +117,27 @@ export default function ChatPage() {
                 msg.role === "user" ? "flex-row-reverse" : "flex-row"
               )}
             >
-              <div className={clsx(
-                "flex-1 space-y-1.5",
-                msg.role === "user" ? "text-right" : "text-left"
-              )}>
-                <div className={clsx(
-                  "text-[14px] leading-relaxed font-medium",
-                  msg.role === "user"
-                    ? "bg-default-100 text-default-900 py-2.5 px-4 rounded-2xl border border-default-200 inline-block"
-                    : "text-default-900 py-1"
-                )}>
+              <div
+                className={clsx(
+                  "flex-1 space-y-1.5",
+                  msg.role === "user" ? "text-right" : "text-left"
+                )}
+              >
+                <div
+                  className={clsx(
+                    "text-[14px] leading-relaxed font-medium",
+                    msg.role === "user"
+                      ? "bg-default-100 text-default-900 py-2.5 px-4 rounded-2xl border border-default-200 inline-block"
+                      : "text-default-900 py-1"
+                  )}
+                >
                   {msg.content}
                 </div>
                 <p className="text-[9px] font-medium text-default-500 uppercase tracking-tight px-1">
-                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {msg.timestamp.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </p>
               </div>
             </div>
@@ -150,7 +162,9 @@ export default function ChatPage() {
               className="min-h-[44px] max-h-40"
               variant="flat"
               value={input}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setInput(e.target.value)
+              }
               onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -158,8 +172,10 @@ export default function ChatPage() {
                 }
               }}
               classNames={{
-                inputWrapper: "bg-transparent shadow-none p-0 min-h-[44px] hover:bg-transparent focus-within:bg-transparent",
-                input: "text-[14px] font-medium pl-4 pr-12 py-3 placeholder:text-default-400 overflow-y-auto"
+                inputWrapper:
+                  "bg-transparent shadow-none p-0 min-h-[44px] hover:bg-transparent focus-within:bg-transparent",
+                input:
+                  "text-[14px] font-medium pl-4 pr-12 py-3 placeholder:text-default-400 overflow-y-auto",
               }}
             />
             <Button
