@@ -120,4 +120,50 @@ class Analyzer:
     def _format_metadata(self) -> str:
         if not self.metadata:
             return "Not provided."
-        return ", ".join(f"{k}: {v}" for k, v in self.metadata.items() if v)
+
+        metadata = self.metadata
+        if hasattr(metadata, "dict"):
+            metadata = metadata.dict()
+
+        sections = []
+        patient = metadata.get("patient_info") or {}
+        if patient:
+            sections.append(
+                f"Patient(age={patient.get('age')}, sex={patient.get('sex')}, region={patient.get('region')})"
+            )
+
+        symptoms = metadata.get("symptoms") or {}
+        if symptoms:
+            positives = ", ".join(
+                name.replace("_", " ")
+                for name, value in symptoms.items()
+                if value is True or (isinstance(value, (int, float)) and value)
+            )
+            if positives:
+                sections.append(f"Symptoms: {positives}")
+
+        risk = metadata.get("risk_factors") or {}
+        if risk:
+            flagged = ", ".join(
+                name.replace("_", " ") for name, value in risk.items() if value
+            )
+            if flagged:
+                sections.append(f"Risk: {flagged}")
+
+        history = metadata.get("medical_history") or {}
+        if history:
+            history_flags = ", ".join(
+                name.replace("_", " ") for name, value in history.items() if value
+            )
+            if history_flags:
+                sections.append(f"History: {history_flags}")
+
+        screening = metadata.get("screening_context") or {}
+        if screening:
+            context_items = ", ".join(
+                f"{k}={v}" for k, v in screening.items() if v is not None
+            )
+            if context_items:
+                sections.append(f"Screening: {context_items}")
+
+        return " | ".join(sections) or "Not provided."

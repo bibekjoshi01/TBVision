@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 
-from tbvision.api.schemas import PredictionResponse
+from tbvision.api.schemas import PredictionResponse, PredictionMetadata
 from tbvision.services.classifier import ClassifierService
 from tbvision.services.analyzer import Analyzer
 from tbvision.utils.image import content_type_is_image, decode_upload_image
@@ -18,7 +18,7 @@ router = APIRouter()
 async def predict(
     request: Request,
     image: UploadFile = File(...),
-    metadata: Optional[str] = Form(None),
+    metadata: Optional[PredictionMetadata] = Form(None),
 ):
     if not image.content_type or not content_type_is_image(image.content_type):
         raise HTTPException(status_code=400, detail="Uploaded file must be an image")

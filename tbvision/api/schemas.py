@@ -5,6 +5,50 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 
+class PatientInfo(BaseModel):
+    age: Optional[int] = None
+    sex: Optional[str] = None
+    region: Optional[str] = None
+
+
+class Symptoms(BaseModel):
+    cough: Optional[bool] = None
+    cough_duration_days: Optional[int] = None
+    fever: Optional[bool] = None
+    night_sweats: Optional[bool] = None
+    weight_loss: Optional[bool] = None
+    chest_pain: Optional[bool] = None
+    shortness_of_breath: Optional[bool] = None
+    fatigue: Optional[bool] = None
+
+
+class RiskFactors(BaseModel):
+    smoker: Optional[bool] = None
+    diabetes: Optional[bool] = None
+    hiv_positive: Optional[bool] = None
+    close_contact_tb_patient: Optional[bool] = None
+    immunocompromised: Optional[bool] = None
+
+
+class MedicalHistory(BaseModel):
+    previous_tb: Optional[bool] = None
+    chronic_lung_disease: Optional[bool] = None
+    recent_pneumonia: Optional[bool] = None
+
+
+class ScreeningContext(BaseModel):
+    screening_type: Optional[str] = None
+    location: Optional[str] = None
+
+
+class PredictionMetadata(BaseModel):
+    patient_info: Optional[PatientInfo] = None
+    symptoms: Optional[Symptoms] = None
+    risk_factors: Optional[RiskFactors] = None
+    medical_history: Optional[MedicalHistory] = None
+    screening_context: Optional[ScreeningContext] = None
+
+
 class HealthResponse(BaseModel):
     status: str
     checkpoint: str
@@ -21,7 +65,7 @@ class PredictionResponse(BaseModel):
     label_map: List[str]
     uncertainty_std: float
     uncertainty_level: str
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[PredictionMetadata] = None
     gradcam_region: Optional[str] = None
     gradcam_image: Optional[str] = None
     evidence: List[Dict[str, Any]]
