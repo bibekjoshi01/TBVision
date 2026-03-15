@@ -3,13 +3,9 @@ from langchain_core.prompts import PromptTemplate  # type: ignore[import]
 explanation_prompt = PromptTemplate(
     input_variables=[
         "prediction_label",
+        "prob",
         "region",
         "patient_info",
-        "chapter",
-        "credit_hours",
-        "learning_outcomes",
-        "topics",
-        "sources",
     ],
     template="""You are a medical AI validator. Analyze this chest X-ray and provide a concise validation report.
 
@@ -33,7 +29,6 @@ synthesis_prompt = PromptTemplate(
         "uncertainty_std",
         "region",
         "gemini_validation",
-        "symptoms_text",
         "patient_info",
         "evidence_text",
     ],

@@ -5,6 +5,7 @@ from tbvision.core.config import Settings
 from tbvision.services.classifier import ClassifierService
 from tbvision.services.generation import GenerationService
 from tbvision.services.retrieval import RetrievalService
+from tbvision.utils.check_internet import check_internet_connection
 
 logger = logging.getLogger(__name__)
 
@@ -25,11 +26,12 @@ class Analyzer:
         self.classifier_service = classifier_service
         self.retrieval_service = retrieval_service
         self.generation_service = generation_service
-        self.is_online = retrieval_service.available()
+        self.is_online = check_internet_connection()
 
     async def analyze(self):
         gradcam_data = {}
         gradcam_image = None
+
         try:
             pred_data = self.classifier_service.predict(self.image)
             gradcam_data = self.classifier_service.analyze_gradcam(pred_data)
@@ -45,12 +47,13 @@ class Analyzer:
             logger.error("Analysis failed: %s", err, exc_info=True)
             raise ValueError("Error occurred while running analyzer.") from err
 
+        # Make Explaination Report If Internet
         if self.is_online:
             evidence = await self.retrieve_evidence(
                 pred_data["probability"], gradcam_data["dominant_region"]
             )
             pred_data["evidence"] = evidence
-            pred_data["mode"] = "online"
+
             try:
                 explanation = await self.generate_explanation(pred_data, gradcam_data)
             except Exception as e:
@@ -58,7 +61,6 @@ class Analyzer:
                 explanation = "Unable to generate explanation."
         else:
             pred_data["evidence"] = []
-            pred_data["mode"] = "offline"
             explanation = "Online services unavailable."
 
         pred_data["gradcam_region"] = gradcam_data.get("description")
@@ -75,16 +77,14 @@ class Analyzer:
             pred_data.get("evidence", [])
         )
         patient_info = self._format_metadata()
-        symptoms = (
-            self.metadata.get("clinical_history") or self.metadata.get("symptoms") or ""
-        )
+
         gemini_validation = await self.generation_service.generate_validation(
             pred_data["prediction_label"],
             pred_data["probability"],
             gradcam_data.get("description", "unspecified region"),
             patient_info,
-            evidence_text,
         )
+
         synthesis = await self.generation_service.generate_synthesis(
             pred_data["prediction_label"],
             pred_data["probability"],
@@ -94,8 +94,8 @@ class Analyzer:
             patient_info,
             evidence_text,
             gemini_validation,
-            symptoms,
         )
+
         return synthesis
 
     async def retrieve_evidence(self, prediction, region, threshold=0.5):

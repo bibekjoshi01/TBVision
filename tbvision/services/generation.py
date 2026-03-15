@@ -30,7 +30,6 @@ class GenerationService:
         probability: float,
         region: str,
         patient_info: str,
-        evidence_text: str,
     ) -> str:
         if not self.gemini:
             return "Gemini validation skipped (API key not configured)."
@@ -40,11 +39,6 @@ class GenerationService:
             prob=probability,
             region=region,
             patient_info=patient_info,
-            chapter="",
-            credit_hours="",
-            learning_outcomes="",
-            topics="",
-            sources=evidence_text or "WHO evidence not available.",
         )
 
         return await self.gemini.generate_text(prompt, temperature=0.2, max_tokens=450)
@@ -59,7 +53,6 @@ class GenerationService:
         patient_info: str,
         evidence_text: str,
         gemini_validation: str,
-        symptoms: str,
     ) -> str:
         adapter = self.mistral or self.gemini
         if not adapter:
@@ -72,7 +65,6 @@ class GenerationService:
             uncertainty_std=uncertainty_std,
             region=region,
             gemini_validation=gemini_validation,
-            symptoms_text=symptoms or "Not provided.",
             patient_info=patient_info,
             evidence_text=evidence_text or "No WHO evidence retrieved.",
         )
