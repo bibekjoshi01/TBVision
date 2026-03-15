@@ -1,7 +1,8 @@
 """Endpoints that expose the RAG helpers."""
+
 from fastapi import APIRouter, Request
 
-from ..schemas import RAGRequest, RAGResponse
+from api.schemas import RAGRequest, RAGResponse
 
 router = APIRouter()
 

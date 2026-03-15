@@ -1,4 +1,5 @@
 """Pydantic models for API requests and responses."""
+
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
@@ -17,7 +18,7 @@ class PredictionResponse(BaseModel):
     raw_logits: List[float]
     label_map: List[str]
     metadata: Optional[Dict[str, Any]] = None
-    model_config: Dict[str, Any]
+    config_snapshot: Dict[str, Any]
 
 
 class RAGDocument(BaseModel):
