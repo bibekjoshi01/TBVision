@@ -2,13 +2,13 @@ from functools import lru_cache
 from pathlib import Path
 from typing import List
 
-from pydantic import Field, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 DEFAULT_CHECKPOINT = ROOT_DIR / "weights" / "xraytb_net.pth"
-DEFAULT_RAG_DOCS = ROOT_DIR / "tbvision" / "backend" / "knowledge" / "knowledge.json"
+DEFAULT_RAG_DOCS = ROOT_DIR / "tbvision" / "backend" / "knowledge"
 
 
 class Settings(BaseSettings):
@@ -33,9 +33,27 @@ class Settings(BaseSettings):
     app_env: str = "development"
     allowed_origins: List[str] = Field(default_factory=lambda: ["*"])
 
+    # Vector DB
+    qdrant_url: str | None = None
     rag_docs_path: Path = Field(default_factory=lambda: DEFAULT_RAG_DOCS)
-    rag_top_k: int = Field(3, ge=1, le=10)
-    enable_rag: bool = Field(True)
+
+    # Embeddings
+    embedding_provider: str = "sentence_transformers"
+    embedding_model: str = "all-MiniLM-L6-v2"
+    embedding_dimension: int = 384
+
+    # LLM
+    llm_provider: str = "gemini"
+    gemini_api_key: SecretStr | None = None
+    local_llm_model: str | None = None
+    mistral_api_key: SecretStr | None = None
+
+    # Chunking
+    chunk_size: int = 1000
+    chunk_overlap: int = 200
+
+    # Retrieval
+    top_k: int = 5
 
     @field_validator("backbones", mode="before")
     @classmethod
@@ -48,6 +66,13 @@ class Settings(BaseSettings):
     @classmethod
     def resolve_paths(cls, value):
         return Path(value).expanduser()
+
+    @field_validator("chunk_overlap")
+    @classmethod
+    def validate_chunk_overlap(cls, v, info):
+        if v >= info.data["chunk_size"]:
+            raise ValueError("chunk_overlap must be smaller than chunk_size")
+        return v
 
 
 @lru_cache
