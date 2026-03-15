@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Dataset folders
+datasets/
+datasets_processed/
+datasets_raw/
+data/
+outputs/
+temp_uploads/
+archive/
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Security & Credentials
+credentials.json
+
+# Batch Processing
+batch_reports/
+batch_temp/
+
+# Logs
+*.log
