@@ -106,3 +106,8 @@ class FollowUpResponse(BaseModel):
     question: str
     answer: str
     history: List[FollowUpHistoryEntry]
+
+
+class FollowUpHistoryResponse(BaseModel):
+    report_id: str
+    history: List[FollowUpHistoryEntry]
