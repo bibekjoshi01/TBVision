@@ -1,68 +1,81 @@
 # xraytb_net
 
-xraytb_net holds the chest x-ray preprocessing, backbone models, evaluation helpers, and entrpoint scripts for the three-class (Normal / OtherDisease / TB) classifier.
+`tbvision.xraytb_net` contains the training, inference, and data utilities for the TB-Vision chest X-ray classifier. It is a lightweight PyTorch stack that can operate either as a single-backbone classifier or as an ensemble of DenseNet, EfficientNet, and ResNet models.
 
-## Quick start
+## Requirements
 
-1. Create and activate your Python 3.12+ virtual environment.
-2. Install the dependencies:
-   ```bash
-   pip install -r tbvision/xraytb_net/requirements.txt
-   ```
-3. Make sure the `weights/` directory contains a trained checkpoint (e.g., `weights/xraytb_net.pth`). Training writes best checkpoints to that path by default.
+Install the package requirements inside `tbvision/xraytb_net/requirements.txt`.
+
+```bash
+python -m venv venv
+source ./venv/bin/activate
+pip install -r tbvision/xraytb_net/requirements.txt
+```
+
+## File layout
+
+- `data_preparation/`: dataset loader, preprocessing (`LungPreprocessor`), and
+  albumentations transforms.
+- `models/`: `TBClassifier` wraps a single backbone and adapts the input conv to a
+  single channel; `TBEnsemble` averages logits from multiple classifiers and supports
+  Monte-Carlo dropout uncertainty.
+- `training/`: `train_classifier.py` orchestrates dataset loading, optimizer/scheduler,
+  focal loss, and checkpoint/history saving.
+- `inference/`: `ClassificationService` for runtime predictions, `evaluator` for
+  evaluating checkpoints against a split, and shared metrics utilities.
+
+## Dataset layout
+
+The training script expects a directory structured like:
+
+```
+dataset/
+  train/
+    Normal/
+    OtherDisease/
+    TB/
+  val/
+    ...
+  test/
+    ...
+```
+
+Each class folder should contain standard image files (`.png`, `.jpg`, `.jpeg`). `CXRDataset` will preprocess every image through `LungPreprocessor`
+(trim borders, apply lung mask, normalize intensity, CLAHE, resize) before applying albumentations transforms defined in `data_preparation/transforms.py`.
 
 ## Training
 
-Train via the CLI entry point:
+Use the `train_classifier.py` script to train a single model or ensemble:
 
 ```bash
 python -m tbvision.xraytb_net.training.train_classifier \
   --data-dir dataset \
   --save-dir weights \
-  --epochs 40 \
-  --batch-size 32
+  --mode ensemble \
+  --backbones densenet121 efficientnet_b3 resnet50 \
+  --epochs 25 \
+  --batch-size 32 \
+  --lr 1e-4 \
+  --image-size 224
 ```
 
-Key flags:
+- `--mode` selects `ensemble` (default) or `single`.
+- `--backbones` controls the individual models in an ensemble.
+- `--mc-dropout` enables stochastic forward passes for uncertainty.
+- Checkpoints named `<mode>-<backbones>_best.pth` are written to `--save-dir`,
+  alongside `<mode>-<backbones>_history.json` summarizing losses and validation metrics.
 
-- `--mode {single,ensemble}`: whether to use a single backbone or ensemble of DenseNet121 / EfficientNet-B3 / ResNet50.
-- `--backbones` / `--backbone`: specify organization for ensemble or single-run mode.
-- `--mc-dropout`: keep dropout active at inference for uncertainty sampling.
-- `--lr`, `--weight-decay`, `--dropout`, `--gamma`: control optimizer / regularization.
+The trainer uses `AdamW`, `ReduceLROnPlateau` on `val AUC`, and `FocalLoss` with inverse frequency class weights. Best models are automatically saved whenever the monitored metric improves.
 
-Training saves the best checkpoint and history in `weights/` and logs metrics (accuracy, AUC, F1, class sensitivities, etc.).
+## Inference & evaluation
 
-## Inference
+- `ClassificationService` (`xraytb_net.inference`) wraps checkpoint loading, preprocessing, and prediction. It returns raw logits, per-class probabilities, binary interpretation, and uncertainty (if MC dropout is enabled).
 
-You can import `ClassificationService` from `tbvision.xraytb_net.inference` directly:
+- `TBEnsemble.predict_with_uncertainty` can be toggled by passing `--mc-dropout` to the trainer and instantiating the service with `use_mc_dropout=True`.
 
-```python
-from tbvision.xraytb_net.inference import ClassificationService
-
-service = ClassificationService(
-    checkpoint_path="weights/xraytb_net.pth",
-    image_size=224,
-    mode="ensemble",
-    use_mc_dropout=False,
-)
-
-result = service.predict("/path/to/cxr.png")
-print(result["prediction"], result["probabilities"])
-```
-
-`ClassificationService` wraps preprocessing, augmentation, device placement, and returns prediction/probabilities/logits.
-
-## Evaluation utilities
-
-- `tbvision.xraytb_net.inference.evaluate_model` works against dataloaders built by `tbvision.xraytb_net.data_preparation.dataset.CXRDataset`.
-- Use `tbvision.xraytb_net.data_preparation.transforms.get_train_transforms` and `get_val_transforms` to build the augmentations used during training/testing.
-
-## Data preparation
-
-Customize dataset splits (train/val/test) under `dataset/` and rely on `CXRDataset` to pick up classes `Normal`, `OtherDisease`, and `TB`. Each image passes through the `tbvision.xraytb_net.data_preparation.preprocessing.LungPreprocessor` pipeline (CLAHE, mask, border crop) before augmentations.
+- `evaluate_checkpoint` accepts a checkpoint, split (`train`/`val`/`test`), and data dir, then runs the loader/evaluator to produce metrics such as AUC, sensitivity, specificity, confusion matrix, and per-class accuracy (see `inference/metrics.py`).
 
 ## Notes
 
-- Always keep the same `image_size` between training and inference (default 224).
-- When running inside another repo component (e.g., backend), refer to this package as `tbvision.xraytb_net`.
-- Weights can be converted to ONNX/ONNX Runtime later; the dependency list already includes `onnxruntime` for that purpose.
+- Keep pretrained weights in `weights/` (default) and point inference scripts/`ClassifierService` at the desired checkpoint path.
+- You can reuse `LungPreprocessor`/`transforms` for other downstream tasks to ensure consistent preprocessing.

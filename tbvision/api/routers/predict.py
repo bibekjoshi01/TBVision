@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 
-from tbvision.api.schemas import PredictionResponse
+from tbvision.api.schemas import PredictionResponse, PredictionMetadata
 from tbvision.services.classifier import ClassifierService
 from tbvision.services.analyzer import Analyzer
 from tbvision.utils.image import content_type_is_image, decode_upload_image
@@ -18,7 +18,7 @@ router = APIRouter()
 async def predict(
     request: Request,
     image: UploadFile = File(...),
-    metadata: Optional[str] = Form(None),
+    metadata: Optional[PredictionMetadata] = Form(None),
 ):
     if not image.content_type or not content_type_is_image(image.content_type):
         raise HTTPException(status_code=400, detail="Uploaded file must be an image")
@@ -42,26 +42,23 @@ async def predict(
 
     # Generating the image analysis using baseline model and online llm
     analyzer = Analyzer(
-        image=decoded, classifier_service=classifier_service, metadata=metadata
+        image=decoded,
+        settings=request.app.state.config,
+        classifier_service=classifier_service,
+        retrieval_service=request.app.state.retrieval_service,
+        generation_service=request.app.state.generation_service,
+        metadata=parsed_metadata or {},
     )
-    pred_data = analyzer.analyze()
+    pred_data = await analyzer.analyze()
 
     gradcam_url = pred_data.get("gradcam_image")
     if gradcam_url and not gradcam_url.startswith("http"):
-        pred_data["gradcam_image"] = urljoin(str(request.base_url), gradcam_url.lstrip("/"))
-
-    config_snapshot = {
-        "checkpoint": str(request.app.state.config.checkpoint_path),
-        "image_size": request.app.state.config.image_size,
-        "mode": request.app.state.config.mode,
-        "backbones": request.app.state.config.backbones,
-        "dropout": request.app.state.config.dropout,
-        "use_mc_dropout": request.app.state.config.use_mc_dropout,
-    }
+        pred_data["gradcam_image"] = urljoin(
+            str(request.base_url), gradcam_url.lstrip("/")
+        )
 
     return PredictionResponse(
         label_map=classifier_service.label_map,
         metadata=parsed_metadata,
-        config_snapshot=config_snapshot,
         **pred_data,
     )
