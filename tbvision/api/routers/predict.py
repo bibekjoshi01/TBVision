@@ -2,6 +2,7 @@
 
 import json
 from typing import Optional
+from urllib.parse import urljoin
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 
@@ -44,6 +45,10 @@ async def predict(
         image=decoded, classifier_service=classifier_service, metadata=metadata
     )
     pred_data = analyzer.analyze()
+
+    gradcam_url = pred_data.get("gradcam_image")
+    if gradcam_url and not gradcam_url.startswith("http"):
+        pred_data["gradcam_image"] = urljoin(str(request.base_url), gradcam_url.lstrip("/"))
 
     config_snapshot = {
         "checkpoint": str(request.app.state.config.checkpoint_path),

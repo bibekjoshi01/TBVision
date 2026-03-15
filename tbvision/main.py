@@ -1,6 +1,8 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
+from fastapi.staticfiles import StaticFiles
 
 from tbvision.api.routes import api_router
 from tbvision.core.config import get_settings
@@ -9,6 +11,7 @@ from tbvision.services.rag import RAGService
 from tbvision.services.classifier import ClassifierService
 
 settings = get_settings()
+settings.media_root.mkdir(parents=True, exist_ok=True)
 
 
 @asynccontextmanager
@@ -50,6 +53,7 @@ app.add_middleware(
 )
 
 
+app.mount(settings.media_url, StaticFiles(directory=settings.media_root), name="media")
 app.include_router(api_router, prefix="/api")
 
 

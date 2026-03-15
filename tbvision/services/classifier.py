@@ -1,6 +1,5 @@
 """Wrapper around the AI model for dependency injection."""
 
-import base64
 import cv2
 import logging
 from pathlib import Path
@@ -8,6 +7,7 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 import torch
+from uuid import uuid4
 
 from tbvision.xraytb_net.inference import ClassificationService
 from tbvision.core.config import Settings
@@ -155,7 +155,7 @@ class ClassifierService:
         return {"dominant": dominant, "description": description}
 
     def create_gradcam_overlay(self, image: np.ndarray, gradcam_heatmap: np.ndarray):
-        """Blend a Grad-CAM heatmap with the original X-ray and return base64 PNG."""
+        """Blend a Grad-CAM heatmap with the original X-ray and write it to disk for serving."""
 
         if image is None or gradcam_heatmap is None:
             return None
@@ -181,5 +181,16 @@ class ClassifierService:
 
         overlay = cv2.addWeighted(original, 0.6, heatmap_colored, 0.4, 0)
 
-        _, buffer = cv2.imencode(".png", overlay)
-        return base64.b64encode(buffer).decode("utf-8")
+        gradcam_dir = Path(self.config.media_root) / "gradcam"
+        gradcam_dir.mkdir(parents=True, exist_ok=True)
+        filename = f"{uuid4().hex}.png"
+        output_path = gradcam_dir / filename
+
+        success = cv2.imwrite(str(output_path), overlay)
+        if not success:
+            return None
+
+        media_url = self.config.media_url.rstrip("/")
+        if media_url == "":
+            media_url = ""
+        return f"{media_url}/gradcam/{filename}"

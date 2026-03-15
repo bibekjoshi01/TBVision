@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     )
     dropout: float = Field(0.3, ge=0.0, le=0.9)
     use_mc_dropout: bool = Field(False)
+    media_root: Path = Field(
+        default_factory=lambda: ROOT_DIR / "tbvision" / "static"
+    )
+    media_url: str = Field("/media")
 
     app_env: str = "development"
     allowed_origins: List[str] = Field(default_factory=lambda: ["*"])
@@ -42,7 +46,7 @@ class Settings(BaseSettings):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
-    @field_validator("checkpoint_path", "rag_docs_path", mode="before")
+    @field_validator("checkpoint_path", "rag_docs_path", "media_root", mode="before")
     @classmethod
     def resolve_paths(cls, value):
         return Path(value).expanduser()
