@@ -110,3 +110,38 @@ Only uncertain cases are forwarded to advanced AI models for deeper analysis.
 3️⃣ Uncertainty score calculated  
 4️⃣ High-confidence cases resolved locally  
 5️⃣ Uncertain cases escalated for AI validation  
+
+# 🏗 System Architecture
+
+TB-Vision follows a **multi-stage AI pipeline**.
+
+### Stage 1 — Local CNN Ensemble
+Models used:
+
+- DenseNet121
+- EfficientNet-B3
+- ResNet50
+
+The ensemble improves robustness and reduces model bias.
+
+Outputs:
+
+- TB probability
+- prediction uncertainty
+- Grad-CAM heatmap
+
+---
+
+### Stage 2 — Uncertainty Estimation
+
+Monte-Carlo Dropout performs multiple forward passes to measure prediction confidence.
+
+This helps detect cases where the model may be unsure.
+
+---
+
+### Stage 3 — Intelligent AI Validation
+
+When uncertainty is high, the system can optionally use cloud AI models to validate findings and generate clinical explanations.
+
+This ensures **safety without requiring constant internet connectivity.**
