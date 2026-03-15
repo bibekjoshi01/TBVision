@@ -16,6 +16,7 @@ from sklearn.metrics import (
 from models.classifier import TBClassifier
 from training.losses import FocalLoss
 from data_preparation.dataset import CXRDataset
+from data_preparation.transforms import get_train_transforms, get_val_transforms
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 os.makedirs("weights", exist_ok=True)
@@ -24,7 +25,7 @@ torch.manual_seed(42)
 np.random.seed(42)
 
 
-def evaluate(model, loader, device="cuda", threshold=0.5):
+def evaluate(model, loader, device="cuda"):
     model.eval()
     all_preds = []
     all_labels = []
@@ -34,49 +35,45 @@ def evaluate(model, loader, device="cuda", threshold=0.5):
             images = batch["image"].to(device)
             labels = batch["label"].to(device)
 
-            logits = model(images)
-            probs = torch.sigmoid(logits)
+            logits = model(images)  # [B, 3]
+            probs = torch.softmax(logits, dim=1)  # multi-class probabilities
 
-            all_preds.extend(probs.cpu().numpy())
+            preds = torch.argmax(probs, dim=1)
+
+            all_preds.extend(preds.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
 
     all_preds = np.array(all_preds)
     all_labels = np.array(all_labels)
-    preds_binary = (all_preds > threshold).astype(int)
 
-    acc = accuracy_score(all_labels, preds_binary)
-    auc = roc_auc_score(all_labels, all_preds)
+    acc = accuracy_score(all_labels, all_preds)
     precision, recall, f1, _ = precision_recall_fscore_support(
-        all_labels, preds_binary, average="binary"
+        all_labels, all_preds, average="macro"
     )
-
-    # Sensitivity / Specificity
-    tn, fp, fn, tp = confusion_matrix(all_labels, preds_binary).ravel()
-    specificity = tn / (tn + fp)
-    sensitivity = recall  # same as TP / (TP + FN)
 
     return {
         "accuracy": acc,
-        "auc": auc,
         "precision": precision,
         "recall": recall,
         "f1": f1,
-        "specificity": specificity,
-        "sensitivity": sensitivity,
         "predictions": all_preds,
         "labels": all_labels,
     }
 
 
-def train(backbone, epochs=15, batch_size=16, lr=3e-4):
+def train(backbone, epochs=25, batch_size=32, lr=1e-4):
     print(f"\nStarting training for backbone: {backbone}\n")
     model = TBClassifier(backbone=backbone).to(DEVICE)
 
     # Load datasets
     # ----------------------------------------------------------------------
     print("\nLoading datasets...")
-    train_dataset = CXRDataset(df="data/labels.csv", img_root="data/raw", split="train")
-    val_dataset = CXRDataset(df="data/labels.csv", img_root="data/raw", split="val")
+    train_dataset = CXRDataset(
+        root="dataset", split="train", transforms=get_train_transforms(224)
+    )
+    val_dataset = CXRDataset(
+        root="dataset", split="val", transforms=get_val_transforms(224)
+    )
 
     print(f"Train samples: {len(train_dataset)}")
     print(f"Val samples: {len(val_dataset)}")
@@ -116,7 +113,7 @@ def train(backbone, epochs=15, batch_size=16, lr=3e-4):
         loop = tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}")
         for batch in loop:
             images = batch["image"].to(DEVICE)
-            labels = batch["label"].to(DEVICE)
+            labels = batch["label"].to(DEVICE).long()
 
             optimizer.zero_grad()
 
