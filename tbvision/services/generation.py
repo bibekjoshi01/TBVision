@@ -69,7 +69,7 @@ class GenerationService:
             evidence_text=evidence_text or "No WHO evidence retrieved.",
         )
 
-        return await adapter.generate_text(prompt, temperature=0.2, max_tokens=1200)
+        return await adapter.generate_text(prompt, temperature=0.2, max_tokens=2000)
 
     @staticmethod
     def summarize_evidence(documents: Iterable[Dict[str, Any]]) -> str:
