@@ -10,3 +10,57 @@
     --font-sans: "font", sans-serif;
     --font-mono: "monospace", monospace;
 }
+
+@layer utilities {
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+
+        /* Force high contrast and background colors */
+        html, body {
+            background-color: white !important;
+            color: black !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Ensure cards don't break across pages */
+        .Card, [class*="Card"], [role="article"] {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            box-shadow: none !important;
+            border: 1px solid #e5e7eb !important;
+            background-color: white !important;
+        }
+
+        /* Force visibility for progress bars and backgrounds */
+        [class*="progress"], 
+        [class*="chip"], 
+        .bg-default-50, 
+        .bg-primary, 
+        .bg-success, 
+        .bg-danger, 
+        .bg-warning {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            background-color: inherit !important;
+        }
+
+        /* Specific fix for HeroUI Progress bar inner */
+        [class*="progress"] > div {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Improve text readability */
+        .text-default-400, .text-default-500 {
+            color: #6b7280 !important; /* Force darker gray for printing */
+        }
+        
+        .text-primary { color: #006fee !important; }
+        .text-success { color: #17c964 !important; }
+        .text-danger { color: #f31260 !important; }
+        .text-warning { color: #f5a524 !important; }
+    }
+}

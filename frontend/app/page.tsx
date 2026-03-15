@@ -6,7 +6,7 @@ import { Link } from "@heroui/link";
 import { Image } from "@heroui/image";
 import { button as buttonStyles } from "@heroui/theme";
 import { title, subtitle } from "@/components/primitives";
-import { Activity, ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -15,15 +15,14 @@ export default function Home() {
     offset: ["start end", "end 80%"],
   });
 
-  const width = useTransform(scrollYProgress, [0, 1], ["75%", "100%"]);
+  const width = useTransform(scrollYProgress, [0, 1], ["80%", "100%"]);
 
   return (
-    <section className="relative flex flex-col items-center justify-center gap-6 pt-6 overflow-hidden">
+    <section className="relative flex flex-col items-center justify-center gap-6 pt-12 overflow-hidden">
       {/* Background ambient light */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/20 blur-[120px] rounded-full pointer-events-none -z-10" />
-
       {/* Top Badge */}
-      <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-default-200 bg-background/50 backdrop-blur-md shadow-sm mb-1">
+      <div className="flex gap-2 items-center mt-6">
         <ShieldCheck size={16} className="text-success" />
         <span className="text-sm font-medium text-default-600">AI-Powered Medical Imaging</span>
       </div>
@@ -35,7 +34,7 @@ export default function Home() {
         <h1 className={title({ size: "lg", color: "blue", class: "tracking-tight leading-tight block mt-2" })}>
           <strong>Chest Radiography</strong>
         </h1>
-        <div className={subtitle({ class: "mt-8 text-default-500 max-w-2xl mx-auto leading-relaxed text-lg" })}>
+        <div className={subtitle({ class: "mt-8 text-default-500 max-w-2xl mx-auto leading-relaxed text-sm" })}>
           Empower your diagnostic workflow with instantaneous, AI-driven insights into chest X-ray imaging. Upload, process, and diagnose with greater confidence and efficiency.
         </div>
       </div>
@@ -67,7 +66,7 @@ export default function Home() {
       </div>
 
       {/* Feature showcase mockup area */}
-      <div ref={containerRef} className="mt-20 w-full max-w-6xl z-10 px-4 flex justify-center pb-32">
+      <div ref={containerRef} className="mt-20 w-full max-w-6xl z-10 px-4 flex justify-center pb-16">
         <motion.div
           style={{ width }}
           className="relative w-full rounded-2xl bg-content1/50 backdrop-blur-xl border border-default-200 shadow-2xl p-2 md:p-4 rings-1 ring-white/10"
@@ -79,8 +78,7 @@ export default function Home() {
             <div className="w-3 h-3 rounded-full bg-success-400" />
           </div>
           <div className="w-full aspect-video bg-default-50/50 rounded-xl flex items-center justify-center text-default-400 border border-default-200 overflow-hidden relative">
-            {/* TODO: Replace src with your actual dashboard screenshot in the public folder */}
-            <Image 
+            <Image
               src="/analysis.png"
               fallbackSrc="https://nextui.org/images/hero-card-complete.jpeg"
               alt="TBVision Dashboard Screenshot"
