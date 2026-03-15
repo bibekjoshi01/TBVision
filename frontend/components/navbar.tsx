@@ -14,6 +14,7 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { Logo } from "@/components/icons";
+import { ThemeSwitch } from "@/components/theme-switch";
 
 export const Navbar = () => {
 
@@ -48,9 +49,13 @@ export const Navbar = () => {
             </NavbarItem>
           ))}
         </ul>
+        <NavbarItem className="hidden sm:flex gap-2">
+          <ThemeSwitch />
+        </NavbarItem>
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+      <NavbarContent className="sm:hidden basis-1 pl-4 flex gap-2 items-center" justify="end">
+        <ThemeSwitch />
         <NavbarMenuToggle />
       </NavbarContent>
 
