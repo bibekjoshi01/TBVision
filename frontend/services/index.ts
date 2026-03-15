@@ -1,2 +1,2 @@
 export { runPrediction } from "./predict";
-export { sendChatQuery } from "./chat";
+export { sendFollowUp } from "./chat";
