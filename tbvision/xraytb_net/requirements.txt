@@ -10,3 +10,4 @@ pandas
 pytorch-gradcam       # Grad-CAM++ utilities.
 onnxruntime           # for later export + edge runtime tests
 scikit-learn
+grad-cam

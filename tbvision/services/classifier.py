@@ -1,10 +1,13 @@
 """Wrapper around the AI model for dependency injection."""
 
+import base64
+import cv2
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import numpy as np
+import torch
 
 from tbvision.xraytb_net.inference import ClassificationService
 from tbvision.core.config import Settings
@@ -51,7 +54,132 @@ class ClassifierService:
     def label_map(self) -> List[str]:
         return self._service.label_map if self._service else []
 
-    def predict(self, image: np.ndarray) -> Dict[str, Optional[float]]:
+    def predict(self, image: np.ndarray) -> Dict[str, Any]:
         if not self._service:
             raise RuntimeError("ClassifierService has not been loaded yet.")
         return self._service.predict(image)
+
+    def analyze_gradcam(self, pred_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Compute Grad-CAM++ heatmap and highlight the dominant lung region."""
+
+        if not self._service:
+            raise RuntimeError("ClassifierService has not been loaded yet.")
+
+        image_tensor = pred_data.get("image_tensor")
+        if image_tensor is None or not isinstance(image_tensor, torch.Tensor):
+            raise ValueError(
+                "`image_tensor` must be present in prediction data for Grad-CAM."
+            )
+
+        try:
+            from pytorch_grad_cam import GradCAMPlusPlus
+            from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
+        except ImportError as exc:  # pragma: no cover - optional dependency
+            raise RuntimeError(
+                "pytorch-grad-cam is required for Grad-CAM analysis."
+            ) from exc
+
+        base_model, target_layer = self._get_gradcam_model_and_layer()
+        target_index = self._resolve_target_index(pred_data.get("prediction"))
+
+        cam = GradCAMPlusPlus(
+            model=base_model,
+            target_layers=[target_layer],
+        )
+
+        grayscale_cam = cam(
+            input_tensor=image_tensor,
+            targets=[ClassifierOutputTarget(target_index)],
+        )[0]
+
+        region_info = self._describe_heatmap_regions(grayscale_cam)
+
+        return {
+            "dominant_region": region_info["dominant"],
+            "description": region_info["description"],
+            "heatmap": grayscale_cam,
+        }
+
+    def _get_gradcam_model_and_layer(self) -> tuple[torch.nn.Module, torch.nn.Module]:
+        """Resolve the base classifier and the convolutional layer to feed Grad-CAM."""
+
+        model = self._service.model
+        if hasattr(model, "models") and hasattr(model, "backbones"):
+            base = model.models[0]
+            backbone_name = model.backbones[0]
+        else:
+            base = model
+            backbone_name = getattr(base, "backbone_name", "densenet121")
+
+        encoder = getattr(base, "encoder", base)
+        target_layer = self._select_conv_layer(encoder, backbone_name)
+        return base, target_layer
+
+    def _select_conv_layer(
+        self, encoder: torch.nn.Module, backbone_name: str
+    ) -> torch.nn.Module:
+        if hasattr(encoder, "features") and hasattr(encoder.features, "denseblock4"):
+            return encoder.features.denseblock4
+        if hasattr(encoder, "layer4"):
+            return encoder.layer4
+        if hasattr(encoder, "blocks") and len(getattr(encoder, "blocks")) > 0:
+            return encoder.blocks[-1]
+        if hasattr(encoder, "conv_head"):
+            return encoder.conv_head
+        return encoder
+
+    def _resolve_target_index(self, prediction: Optional[str]) -> int:
+        if prediction is None:
+            return 0
+        try:
+            return self.label_map.index(prediction)
+        except ValueError:
+            return 0
+
+    def _describe_heatmap_regions(self, heatmap: np.ndarray) -> Dict[str, str]:
+        h = heatmap.shape[0]
+        upper = np.mean(heatmap[: h // 3])
+        middle = np.mean(heatmap[h // 3 : 2 * h // 3])
+        lower = np.mean(heatmap[2 * h // 3 :])
+
+        regions = {"upper": upper, "middle": middle, "lower": lower}
+        dominant = max(regions, key=regions.get)
+
+        if dominant == "upper":
+            description = "Upper lung zones (post-primary TB patterns)"
+        elif dominant == "lower":
+            description = "Lower lung zones"
+        else:
+            description = "Diffuse distribution across lung fields"
+
+        return {"dominant": dominant, "description": description}
+
+    def create_gradcam_overlay(self, image: np.ndarray, gradcam_heatmap: np.ndarray):
+        """Blend a Grad-CAM heatmap with the original X-ray and return base64 PNG."""
+
+        if image is None or gradcam_heatmap is None:
+            return None
+
+        original = image
+        if original.dtype != np.uint8:
+            original = np.clip(original, 0, 255).astype(np.uint8)
+
+        if original.ndim == 2:
+            original = cv2.cvtColor(original, cv2.COLOR_GRAY2BGR)
+        elif original.ndim == 3 and original.shape[2] == 1:
+            original = cv2.cvtColor(original, cv2.COLOR_GRAY2BGR)
+        elif original.ndim == 3 and original.shape[2] == 4:
+            original = original[:, :, :3]
+
+        h, w = original.shape[:2]
+
+        resized_heatmap = cv2.resize(gradcam_heatmap, (w, h))
+        scaled_heatmap = np.clip(resized_heatmap, 0, 1) * 255
+        heatmap_colored = cv2.applyColorMap(
+            scaled_heatmap.astype(np.uint8), cv2.COLORMAP_JET
+        )
+
+        overlay = cv2.addWeighted(original, 0.6, heatmap_colored, 0.4, 0)
+
+        _, buffer = cv2.imencode(".png", overlay)
+        return base64.b64encode(buffer).decode("utf-8")

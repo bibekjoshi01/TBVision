@@ -7,7 +7,8 @@ from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 
 from tbvision.api.schemas import PredictionResponse
 from tbvision.services.classifier import ClassifierService
-from tbvision.services.image import content_type_is_image, decode_upload_image
+from tbvision.services.analyzer import Analyzer
+from tbvision.utils.image import content_type_is_image, decode_upload_image
 
 router = APIRouter()
 
@@ -23,8 +24,8 @@ async def predict(
 
     classifier_service: ClassifierService = request.app.state.classifier_service
     decoded = await decode_upload_image(image)
-    raw = classifier_service.predict(decoded)
 
+    # Parsing the metadata like symptoms
     parsed_metadata = None
     if metadata:
         try:
@@ -38,18 +39,24 @@ async def predict(
                 status_code=400, detail="metadata must be a JSON object"
             )
 
+    # Generating the image analysis using baseline model and online llm
+    analyzer = Analyzer(
+        image=decoded, classifier_service=classifier_service, metadata=metadata
+    )
+    pred_data = analyzer.analyze()
+
+    config_snapshot = {
+        "checkpoint": str(request.app.state.config.checkpoint_path),
+        "image_size": request.app.state.config.image_size,
+        "mode": request.app.state.config.mode,
+        "backbones": request.app.state.config.backbones,
+        "dropout": request.app.state.config.dropout,
+        "use_mc_dropout": request.app.state.config.use_mc_dropout,
+    }
+
     return PredictionResponse(
-        prediction=raw["prediction"],
-        probabilities=raw["probabilities"],
-        raw_logits=raw["raw_logits"],
         label_map=classifier_service.label_map,
         metadata=parsed_metadata,
-        config_snapshot={
-            "checkpoint": str(request.app.state.config.checkpoint_path),
-            "image_size": request.app.state.config.image_size,
-            "mode": request.app.state.config.mode,
-            "backbones": request.app.state.config.backbones,
-            "dropout": request.app.state.config.dropout,
-            "use_mc_dropout": request.app.state.config.use_mc_dropout,
-        },
+        config_snapshot=config_snapshot,
+        **pred_data,
     )

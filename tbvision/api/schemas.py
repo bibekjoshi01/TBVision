@@ -14,11 +14,20 @@ class HealthResponse(BaseModel):
 
 class PredictionResponse(BaseModel):
     prediction: str
+    prediction_label: str
+    probability: float
     probabilities: Dict[str, float]
     raw_logits: List[float]
     label_map: List[str]
+    uncertainty_std: float
+    uncertainty_level: str
     metadata: Optional[Dict[str, Any]] = None
     config_snapshot: Dict[str, Any]
+    gradcam_region: Optional[str] = None
+    gradcam_image: Optional[str] = None
+    mode: str
+    evidence: List[Dict[str, Any]]
+    explanation: Dict[str, Any]
 
 
 class RAGDocument(BaseModel):

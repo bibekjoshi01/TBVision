@@ -81,14 +81,61 @@ class ClassificationService:
         self, image: Union[str, np.ndarray], probability_threshold: float = 0.5
     ) -> Dict[str, Union[str, float, Dict[str, float]]]:
         tensor = self.preprocess(image).unsqueeze(0).to(self.device)
+
+        image_tensor = tensor.clone()
+
+        # Ensure single channel
+        if image_tensor.shape[1] == 3:
+            image_tensor = image_tensor.mean(dim=1, keepdim=True)
+        elif image_tensor.shape[1] != 1:
+            image_tensor = image_tensor[:, :1, :, :]
+
         with torch.no_grad():
             logits = self.model(tensor)
             probs = torch.softmax(logits, dim=1)[0].cpu().numpy()
+
+        target_label = "TB"
+        if target_label in self.label_map:
+            target_index = self.label_map.index(target_label)
+        else:
+            target_index = int(np.argmax(probs))
+
+        mean_prob = float(probs[target_index])
+        std_prob = 0.0
+        if getattr(self.model, "use_mc_dropout", False):
+            mean_preds, std_preds = self.model.predict_with_uncertainty(
+                image_tensor, n_samples=20
+            )
+            mean_preds = mean_preds.detach().cpu()
+            std_preds = std_preds.detach().cpu()
+            mean_prob = float(mean_preds[0, target_index])
+            std_prob = float(std_preds[0, target_index])
+
+        if std_prob < 0.12:
+            uncertainty = "Low"
+        elif std_prob < 0.20:
+            uncertainty = "Medium"
+        else:
+            uncertainty = "High"
+
+        prediction_label = (
+            "Possible Tuberculosis"
+            if mean_prob >= probability_threshold
+            else "Likely Normal"
+        )
+
         result = {
-            "prediction": self.label_map[int(np.argmax(probs))],
+            "raw_logits": logits.cpu().numpy().tolist()[0],
             "probabilities": {
                 cls: float(probs[idx]) for idx, cls in enumerate(self.label_map)
             },
-            "raw_logits": logits.cpu().numpy().tolist()[0],
+            "prediction": self.label_map[int(np.argmax(probs))],
+            # ----------------------------------
+            "probability": mean_prob,
+            "prediction_label": prediction_label,
+            "uncertainty_std": std_prob,
+            "uncertainty_level": uncertainty,
+            "image_tensor": image_tensor,
         }
+
         return result
