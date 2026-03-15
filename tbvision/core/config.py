@@ -6,9 +6,9 @@ from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-ROOT_DIR = Path(__file__).resolve().parents[3]
-DEFAULT_CHECKPOINT = ROOT_DIR / "weights" / "ensemble-densenet121_best.pth"
-DEFAULT_RAG_DOCS = Path(__file__).resolve().parents[1] / "rag" / "knowledge.json"
+ROOT_DIR = Path(__file__).resolve().parents[2]
+DEFAULT_CHECKPOINT = ROOT_DIR / "weights" / "xraytb_net.pth"
+DEFAULT_RAG_DOCS = ROOT_DIR / "tbvision" / "backend" / "knowledge" / "knowledge.json"
 
 
 class Settings(BaseSettings):

@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -12,19 +11,15 @@ from torch.optim import AdamW, lr_scheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-PACKAGE_ROOT = Path(__file__).resolve().parents[1]
-PROJECT_ROOT = PACKAGE_ROOT.parents[0]
-for path in (PACKAGE_ROOT, PROJECT_ROOT):
-    path_str = str(path)
-    if path_str not in sys.path:
-        sys.path.append(path_str)
-
-from xraytb_net.data_preparation.dataset import CXRDataset
-from xraytb_net.data_preparation.transforms import get_train_transforms, get_val_transforms
-from xraytb_net.models.classifier import TBClassifier
-from xraytb_net.models.ensemble import TBEnsemble
-from xraytb_net.inference.metrics import evaluate_model
-from xraytb_net.training.losses import FocalLoss
+from tbvision.xraytb_net.data_preparation.dataset import CXRDataset
+from tbvision.xraytb_net.data_preparation.transforms import (
+    get_train_transforms,
+    get_val_transforms,
+)
+from tbvision.xraytb_net.models.classifier import TBClassifier
+from tbvision.xraytb_net.models.ensemble import TBEnsemble
+from tbvision.xraytb_net.inference.metrics import evaluate_model
+from tbvision.xraytb_net.training.losses import FocalLoss
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"

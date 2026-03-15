@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
-import torchvision.models as models
+from torchvision import models
+from torchvision.models import DenseNet121_Weights, ResNet50_Weights
 import timm
 
 
@@ -20,14 +21,16 @@ class TBClassifier(nn.Module):
 
         # Initialize backbone
         if backbone == "densenet121":
-            model = models.densenet121(pretrained=pretrained)
+            weights = DenseNet121_Weights.IMAGENET1K_V1 if pretrained else None
+            model = models.densenet121(weights=weights)
             in_features = model.classifier.in_features
             model.classifier = nn.Identity()
             self._adapt_input_conv(model.features, "conv0", in_channels=1)
             self.encoder = model
 
         elif backbone == "resnet50":
-            model = models.resnet50(pretrained=pretrained)
+            weights = ResNet50_Weights.IMAGENET1K_V1 if pretrained else None
+            model = models.resnet50(weights=weights)
             in_features = model.fc.in_features
             model.fc = nn.Identity()
             self._adapt_input_conv(model, "conv1", in_channels=1)
@@ -61,7 +64,9 @@ class TBClassifier(nn.Module):
         logits = self.classifier(features)
         return logits
 
-    def _adapt_input_conv(self, parent_module: nn.Module, attr_name: str, in_channels: int):
+    def _adapt_input_conv(
+        self, parent_module: nn.Module, attr_name: str, in_channels: int
+    ):
         conv_layer = getattr(parent_module, attr_name)
         if conv_layer.in_channels == in_channels:
             return
