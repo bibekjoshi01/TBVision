@@ -1,5 +1,5 @@
 import { API_BASE } from "@/lib/constants";
-import type { FollowUpResponse } from "@/types";
+import type { FollowUpHistoryResponse, FollowUpResponse } from "@/types";
 
 export async function sendFollowUp(
   reportId: string,
@@ -16,4 +16,18 @@ export async function sendFollowUp(
   }
 
   return response.json() as Promise<FollowUpResponse>;
+}
+
+export async function fetchFollowUpHistory(
+  reportId: string
+): Promise<FollowUpHistoryResponse> {
+  const response = await fetch(
+    `${API_BASE}/api/follow-up/history?report_id=${encodeURIComponent(reportId)}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch follow-up history");
+  }
+
+  return response.json() as Promise<FollowUpHistoryResponse>;
 }

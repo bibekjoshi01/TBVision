@@ -108,3 +108,8 @@ export interface FollowUpResponse {
   answer: string;
   history: FollowUpHistoryEntry[];
 }
+
+export interface FollowUpHistoryResponse {
+  report_id: string;
+  history: FollowUpHistoryEntry[];
+}

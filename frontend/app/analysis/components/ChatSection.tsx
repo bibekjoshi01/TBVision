@@ -6,7 +6,7 @@ import { Button } from "@heroui/button";
 import { Textarea } from "@heroui/input";
 import { ScrollShadow } from "@heroui/scroll-shadow";
 import clsx from "clsx";
-import { sendFollowUp } from "@/services/chat";
+import { fetchFollowUpHistory, sendFollowUp } from "@/services/chat";
 import type { FollowUpHistoryEntry } from "@/types";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 
@@ -51,6 +51,22 @@ export default function ChatSection({ reportId }: { reportId?: string }) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (!reportId) return;
+    let isActive = true;
+    fetchFollowUpHistory(reportId)
+      .then((data) => {
+        if (!isActive) return;
+        setMessages(historyToMessages(data.history || []));
+      })
+      .catch((error) => {
+        console.error("Failed to load follow-up history:", error);
+      });
+    return () => {
+      isActive = false;
+    };
+  }, [reportId]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
