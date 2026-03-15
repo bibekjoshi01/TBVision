@@ -1,2 +1,2 @@
--r backend/requirements.txt
--r xraytb_net/requirements.txt
+-r tbvision/backend/requirements.txt
+-r tbvision/xraytb_net/requirements.txt

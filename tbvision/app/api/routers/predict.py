@@ -5,9 +5,9 @@ from typing import Optional
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 
-from api.schemas import PredictionResponse
-from services.classifier import ClassifierService
-from services.image import content_type_is_image, decode_upload_image
+from tbvision.app.api.schemas import PredictionResponse
+from tbvision.app.services.classifier import ClassifierService
+from tbvision.app.services.image import content_type_is_image, decode_upload_image
 
 router = APIRouter()
 

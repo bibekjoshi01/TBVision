@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from ..core.config import AppConfig
+from tbvision.app.core.config import Settings
 
 
 logger = logging.getLogger(__name__)
@@ -81,7 +81,7 @@ class KnowledgeBase:
 
 
 class RAGService:
-    def __init__(self, config: AppConfig):
+    def __init__(self, config: Settings):
         self._config = config
         self._knowledge: Optional[KnowledgeBase] = None
 

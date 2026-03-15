@@ -9,4 +9,4 @@ Current expectations:
 - POST `/predict` with `image` + optional JSON `metadata` (see root README).
 - Display the returned `probabilities`, `prediction`, and any `metadata` fields.
 
-Add any frontend-specific dependencies into `frontend/requirements.txt` or another platform-appropriate manifest (e.g., `package.json`).
+Add any frontend-specific dependencies into `tbvision/frontend/requirements.txt` or another platform-appropriate manifest (e.g., `package.json`).

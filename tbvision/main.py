@@ -1,19 +1,12 @@
-import sys
-from pathlib import Path
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.append(str(REPO_ROOT))
-
-from api.routes import api_router
-from core.config import get_settings
-from core.logging import configure_logging
-from rag.service import RAGService
-from services.classifier import ClassifierService
+from tbvision.app.api.routes import api_router
+from tbvision.app.core.config import get_settings
+from tbvision.app.core.logging import configure_logging
+from tbvision.app.services.rag import RAGService
+from tbvision.app.services.classifier import ClassifierService
 
 settings = get_settings()
 
