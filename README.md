@@ -73,3 +73,40 @@ Existing AI tools often fail in real clinical environments because they:
 - are **too expensive for mass screening**
 
 This creates a critical need for an **affordable, explainable, and offline-capable TB screening system.**
+
+# 💡 Our Solution
+
+TB-Vision introduces a **hybrid AI screening system** that combines:
+
+- lightweight deep learning models
+- explainable AI
+- uncertainty-aware predictions
+- optional cloud validation
+
+### Key Principles
+
+**Offline First**
+
+The core CNN ensemble runs locally on basic computers without internet access.
+
+**Explainability**
+
+Grad-CAM++ highlights the lung regions influencing the AI decision.
+
+**Uncertainty Awareness**
+
+Monte-Carlo Dropout estimates prediction confidence and flags risky cases.
+
+**Intelligent Escalation**
+
+Only uncertain cases are forwarded to advanced AI models for deeper analysis.
+
+---
+
+### Screening Workflow
+
+1️⃣ Patient X-ray uploaded  
+2️⃣ CNN ensemble performs local prediction  
+3️⃣ Uncertainty score calculated  
+4️⃣ High-confidence cases resolved locally  
+5️⃣ Uncertain cases escalated for AI validation  
