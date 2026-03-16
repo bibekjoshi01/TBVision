@@ -20,6 +20,7 @@ This hybrid design enables **fast, affordable, and scalable TB screening worldwi
 | Resource   | Link                                        |
 | ---------- | ------------------------------------------- |
 | Demo Video | https://www.youtube.com/watch?v=1Haj5EFSahw |
+| Presentation Link | https://gamma.app/docs/PROBLEM-STATEMENT-13dzdo0ba29p1w5?mode=present#card-rpp0rb40e5f4lfr |
 
 ---
 
