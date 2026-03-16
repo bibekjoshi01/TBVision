@@ -17,9 +17,7 @@ This hybrid design enables **fast, affordable, and scalable TB screening worldwi
 
 | Resource | Link |
 |--------|------|
-| Live Demo | https://tbvision.vercel.app |
 | Demo Video | https://youtu.be/... |
-| GitHub Repository | https://github.com/bibekjoshi01/TBVision |
 
 ---
 
