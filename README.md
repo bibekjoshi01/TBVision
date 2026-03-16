@@ -2,12 +2,12 @@
 
 ### Explainable AI for Tuberculosis Screening in Resource-Limited Settings
 
-TB-Vision is a **clinical decision support system for tuberculosis screening** that combines lightweight deep learning models with explainable AI and intelligent validation. 
+TB-Vision is a **clinical decision support system for tuberculosis screening** that combines lightweight deep learning models with explainable AI and intelligent validation.
 The system is designed for **rural clinics and low-resource healthcare environments**, where radiologists and diagnostic infrastructure are limited.
 
 1️⃣ **Local CNN ensemble** analyzes chest X-rays  
 2️⃣ **Uncertainty estimation** determines prediction confidence  
-3️⃣ **Cloud validation** is triggered for further medical explaination 
+3️⃣ **Cloud validation** is triggered for further medical explaination
 
 This hybrid design enables **fast, affordable, and scalable TB screening worldwide.**
 
@@ -15,8 +15,8 @@ This hybrid design enables **fast, affordable, and scalable TB screening worldwi
 
 ### 🔗 Links
 
-| Resource | Link |
-|--------|------|
+| Resource   | Link                                        |
+| ---------- | ------------------------------------------- |
 | Demo Video | https://www.youtube.com/watch?v=1Haj5EFSahw |
 
 ---
@@ -42,6 +42,7 @@ TB-Vision solves these problems through:
 Tuberculosis remains one of the deadliest infectious diseases worldwide.
 
 ### Global Impact
+
 - **10.7 million cases** reported in 2024
 - **1.23 million deaths annually**
 - **2.4 million cases remain undiagnosed**
@@ -50,12 +51,12 @@ Tuberculosis remains one of the deadliest infectious diseases worldwide.
 
 Many countries with the highest TB burden lack access to diagnostic radiology.
 
-| Region | Radiologists per million |
-|------|------|
-| USA / Europe | 100+ |
-| Indonesia | <10 |
-| Pakistan | <8 |
-| Low-income regions | <2 |
+| Region             | Radiologists per million |
+| ------------------ | ------------------------ |
+| USA / Europe       | 100+                     |
+| Indonesia          | <10                      |
+| Pakistan           | <8                       |
+| Low-income regions | <2                       |
 
 Over **50% of the world's population lacks reliable diagnostic imaging access.**
 
@@ -105,14 +106,14 @@ Only uncertain cases are forwarded to advanced AI models for deeper analysis.
 2️⃣ CNN ensemble performs local prediction  
 3️⃣ Uncertainty score calculated  
 4️⃣ High-confidence cases resolved locally  
-5️⃣ Uncertain cases escalated for AI validation  
+5️⃣ Uncertain cases escalated for AI validation
 
 # 🏗 System Architecture
 
 TB-Vision follows a **multi-stage AI pipeline**.
 
-
 ### Stage 1 — Local CNN Ensemble
+
 Models used:
 
 - DenseNet121
