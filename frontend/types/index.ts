@@ -9,9 +9,13 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 // ---------------------------------------------------------------------------
 
 export interface EvidenceItem {
-  label: string;
+  id: string;
+  text: string;
   score: number;
-  description: string;
+  metadata: {
+    title?: string;
+    [key: string]: any;
+  };
 }
 
 export interface PatientInfo {
