@@ -41,3 +41,4 @@ batch_temp/
 weights/
 dataset/
 static/
+reports.db
