@@ -42,3 +42,4 @@ weights/
 dataset/
 static/
 reports.db
+*.db-shm
