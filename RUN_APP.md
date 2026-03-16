@@ -38,7 +38,7 @@ This guide shows how to launch both the backend API and the frontend portal simu
 6. **Load Knowledge base**
 
    ```bash
-   python scripts/load_knowledge.py
+   python -m scripts.load_knowledge
    ```
 
 7. **Environment variables** – Copy `.env.example` to `.env` with overrides such as:
