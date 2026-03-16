@@ -7,7 +7,7 @@ The system is designed for **rural clinics and low-resource healthcare environme
 
 1️⃣ **Local CNN ensemble** analyzes chest X-rays  
 2️⃣ **Uncertainty estimation** determines prediction confidence  
-3️⃣ **Cloud validation** is triggered only for uncertain cases  
+3️⃣ **Cloud validation** is triggered for further medical explaination 
 
 This hybrid design enables **fast, affordable, and scalable TB screening worldwide.**
 
