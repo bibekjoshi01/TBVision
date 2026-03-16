@@ -5,8 +5,6 @@
 TB-Vision is a **clinical decision support system for tuberculosis screening** that combines lightweight deep learning models with explainable AI and intelligent validation. 
 The system is designed for **rural clinics and low-resource healthcare environments**, where radiologists and diagnostic infrastructure are limited.
 
-Instead of relying solely on cloud AI, TB-Vision follows an **offline-first architecture**:
-
 1️⃣ **Local CNN ensemble** analyzes chest X-rays  
 2️⃣ **Uncertainty estimation** determines prediction confidence  
 3️⃣ **Cloud validation** is triggered only for uncertain cases  
