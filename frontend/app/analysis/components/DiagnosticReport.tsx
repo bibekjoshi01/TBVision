@@ -19,7 +19,60 @@ interface DiagnosticReportProps {
 
 export function DiagnosticReport({ results, previewUrl }: DiagnosticReportProps) {
   const reportContent = results.explanation?.trim();
-  const evidence = results.evidence || [];
+  const evidence = [
+    {
+      "id": "a77a8645-0fef-409f-9149-8e872e49254f",
+      "score": 0.7436071,
+      "content": "Cavitation \nPost-primary cavitation is seen more commonly in adolescents and is the hallmark \nof post-primary TB on chest radiographs (Figure 7). Cavitation may also result from nod-\nular attenuation of bronchi or progressive primary disease, with the development of mul-\ntiple bilateral cavities in younger children who are usually very ill [1,2]. The chest \nFigure 6. Consolidation and miliary TB. Frontal AP and lateral chest radiographs in a 3-year-old boy\nwith conﬁrmed disseminated TB. This child did not receive BCG vaccination. ( a) Frontal AP and\n(b) lateral chest radiographs demonstrating right upper lobe consolidation with air bronchograms\n(black arrow) limited by the horizontal ﬁssure (white arrows), as well as parenchymal miliary TB\nnodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small",
+      "metadata": {
+        "document_id": "ad367680-2b00-4430-9fab-509a0d4ab969",
+        "chunk_index": 51,
+        "content": "Cavitation \nPost-primary cavitation is seen more commonly in adolescents and is the hallmark \nof post-primary TB on chest radiographs (Figure 7). Cavitation may also result from nod-\nular attenuation of bronchi or progressive primary disease, with the development of mul-\ntiple bilateral cavities in younger children who are usually very ill [1,2]. The chest \nFigure 6. Consolidation and miliary TB. Frontal AP and lateral chest radiographs in a 3-year-old boy\nwith conﬁrmed disseminated TB. This child did not receive BCG vaccination. ( a) Frontal AP and\n(b) lateral chest radiographs demonstrating right upper lobe consolidation with air bronchograms\n(black arrow) limited by the horizontal ﬁssure (white arrows), as well as parenchymal miliary TB\nnodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small"
+      }
+    },
+    {
+      "id": "8cde3bc1-e784-42fc-9285-fbc2865c3266",
+      "score": 0.7436071,
+      "content": "Cavitation \nPost-primary cavitation is seen more commonly in adolescents and is the hallmark \nof post-primary TB on chest radiographs (Figure 7). Cavitation may also result from nod-\nular attenuation of bronchi or progressive primary disease, with the development of mul-\ntiple bilateral cavities in younger children who are usually very ill [1,2]. The chest \nFigure 6. Consolidation and miliary TB. Frontal AP and lateral chest radiographs in a 3-year-old boy\nwith conﬁrmed disseminated TB. This child did not receive BCG vaccination. ( a) Frontal AP and\n(b) lateral chest radiographs demonstrating right upper lobe consolidation with air bronchograms\n(black arrow) limited by the horizontal ﬁssure (white arrows), as well as parenchymal miliary TB\nnodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small",
+      "metadata": {
+        "document_id": "pathogens-11-00161-51",
+        "chunk_index": 51,
+        "content": "Cavitation \nPost-primary cavitation is seen more commonly in adolescents and is the hallmark \nof post-primary TB on chest radiographs (Figure 7). Cavitation may also result from nod-\nular attenuation of bronchi or progressive primary disease, with the development of mul-\ntiple bilateral cavities in younger children who are usually very ill [1,2]. The chest \nFigure 6. Consolidation and miliary TB. Frontal AP and lateral chest radiographs in a 3-year-old boy\nwith conﬁrmed disseminated TB. This child did not receive BCG vaccination. ( a) Frontal AP and\n(b) lateral chest radiographs demonstrating right upper lobe consolidation with air bronchograms\n(black arrow) limited by the horizontal ﬁssure (white arrows), as well as parenchymal miliary TB\nnodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small",
+        "source": "pathogens-11-00161.pdf"
+      }
+    },
+    {
+      "id": "46831640-75a1-455b-a0e0-a86b38566e78",
+      "score": 0.7436071,
+      "content": "Cavitation \nPost-primary cavitation is seen more commonly in adolescents and is the hallmark \nof post-primary TB on chest radiographs (Figure 7). Cavitation may also result from nod-\nular attenuation of bronchi or progressive primary disease, with the development of mul-\ntiple bilateral cavities in younger children who are usually very ill [1,2]. The chest \nFigure 6. Consolidation and miliary TB. Frontal AP and lateral chest radiographs in a 3-year-old boy\nwith conﬁrmed disseminated TB. This child did not receive BCG vaccination. ( a) Frontal AP and\n(b) lateral chest radiographs demonstrating right upper lobe consolidation with air bronchograms\n(black arrow) limited by the horizontal ﬁssure (white arrows), as well as parenchymal miliary TB\nnodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small",
+      "metadata": {
+        "document_id": "b7988125-710e-45db-ac1b-d75a35cb7b37",
+        "chunk_index": 51,
+        "content": "Cavitation \nPost-primary cavitation is seen more commonly in adolescents and is the hallmark \nof post-primary TB on chest radiographs (Figure 7). Cavitation may also result from nod-\nular attenuation of bronchi or progressive primary disease, with the development of mul-\ntiple bilateral cavities in younger children who are usually very ill [1,2]. The chest \nFigure 6. Consolidation and miliary TB. Frontal AP and lateral chest radiographs in a 3-year-old boy\nwith conﬁrmed disseminated TB. This child did not receive BCG vaccination. ( a) Frontal AP and\n(b) lateral chest radiographs demonstrating right upper lobe consolidation with air bronchograms\n(black arrow) limited by the horizontal ﬁssure (white arrows), as well as parenchymal miliary TB\nnodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small"
+      }
+    },
+    {
+      "id": "ab15d060-e986-46d3-a93c-848717902d4f",
+      "score": 0.7436071,
+      "content": "Cavitation \nPost-primary cavitation is seen more commonly in adolescents and is the hallmark \nof post-primary TB on chest radiographs (Figure 7). Cavitation may also result from nod-\nular attenuation of bronchi or progressive primary disease, with the development of mul-\ntiple bilateral cavities in younger children who are usually very ill [1,2]. The chest \nFigure 6. Consolidation and miliary TB. Frontal AP and lateral chest radiographs in a 3-year-old boy\nwith conﬁrmed disseminated TB. This child did not receive BCG vaccination. ( a) Frontal AP and\n(b) lateral chest radiographs demonstrating right upper lobe consolidation with air bronchograms\n(black arrow) limited by the horizontal ﬁssure (white arrows), as well as parenchymal miliary TB\nnodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small",
+      "metadata": {
+        "document_id": "ec8b4ed2-84ae-4af6-be39-a0833a9ba86d",
+        "chunk_index": 51,
+        "content": "Cavitation \nPost-primary cavitation is seen more commonly in adolescents and is the hallmark \nof post-primary TB on chest radiographs (Figure 7). Cavitation may also result from nod-\nular attenuation of bronchi or progressive primary disease, with the development of mul-\ntiple bilateral cavities in younger children who are usually very ill [1,2]. The chest \nFigure 6. Consolidation and miliary TB. Frontal AP and lateral chest radiographs in a 3-year-old boy\nwith conﬁrmed disseminated TB. This child did not receive BCG vaccination. ( a) Frontal AP and\n(b) lateral chest radiographs demonstrating right upper lobe consolidation with air bronchograms\n(black arrow) limited by the horizontal ﬁssure (white arrows), as well as parenchymal miliary TB\nnodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small"
+      }
+    },
+    {
+      "id": "8dc130f1-1b39-4d4e-94b7-101c4a184737",
+      "score": 0.74325776,
+      "content": "nodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small\nconsolidation (<0.5 cm), usually not identiﬁed on chest radiographs, is more frequently\nseen when using ultrasound [10].\nChildren over 5 years more commonly exhibit “tree-in-bud” consolidation on CT scan.\nThis represents multiple areas of centrilobular nodules [ 25]. As the disease progresses,\nconsolidation may develop areas of caseous necrosis centrally—this is represented by areas\nof low attenuation which do not enhance post-administration of contrast. Rarely, airspace\ndisease progresses to cavity formation, as is commonly seen in adult TB [1,2,25].\nMRI is superior to CT in the characterization of tuberculous consolidation in that the\nMRI signal varies with the stage of necrosis and the presence of mycobacterium within",
+      "metadata": {
+        "document_id": "pathogens-11-00161-52",
+        "chunk_index": 52,
+        "content": "nodules.\nThe ability to identify peripheral consolidation with ultrasound is comparable to\nchest radiographs [10]. This is consistent with previous pneumonia studies [ 33]. Small\nconsolidation (<0.5 cm), usually not identiﬁed on chest radiographs, is more frequently\nseen when using ultrasound [10].\nChildren over 5 years more commonly exhibit “tree-in-bud” consolidation on CT scan.\nThis represents multiple areas of centrilobular nodules [ 25]. As the disease progresses,\nconsolidation may develop areas of caseous necrosis centrally—this is represented by areas\nof low attenuation which do not enhance post-administration of contrast. Rarely, airspace\ndisease progresses to cavity formation, as is commonly seen in adult TB [1,2,25].\nMRI is superior to CT in the characterization of tuberculous consolidation in that the\nMRI signal varies with the stage of necrosis and the presence of mycobacterium within",
+        "source": "pathogens-11-00161.pdf"
+      }
+    }
+  ];
 
   return (
     <div id="report-content" className="space-y-8 animate-in fade-in duration-500">
@@ -74,48 +127,48 @@ export function DiagnosticReport({ results, previewUrl }: DiagnosticReportProps)
         </CardBody>
       </Card>
 
-        {/* 4. Patient & Clinical Context Card */}
-        <Card className="shadow-none border border-default-200">
-          <CardBody className="p-8">
-            <div className="space-y-4 text-left">
-              <div className="space-y-2 mb-2">
-                <p className="text-md font-black text-default-800 uppercase tracking-wider">Patient & Clinical Context</p>
-                <p className="text-sm text-default-600 font-semibold leading-relaxed">Physiological indicators and provenance data collected during intake.</p>
+      {/* 4. Patient & Clinical Context Card */}
+      <Card className="shadow-none border border-default-200">
+        <CardBody className="p-8">
+          <div className="space-y-4 text-left">
+            <div className="space-y-2 mb-2">
+              <p className="text-md font-black text-default-800 uppercase tracking-wider">Patient & Clinical Context</p>
+              <p className="text-sm text-default-600 font-semibold leading-relaxed">Physiological indicators and provenance data collected during intake.</p>
+            </div>
+            <div className="bg-default-50 p-6 rounded-xl border border-default-100 space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-default-500 font-bold uppercase">Patient Info</p>
+                  <p className="text-sm font-bold">{results.metadata?.patient_info?.age}y, {results.metadata?.patient_info?.sex}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-default-500 font-bold uppercase">Provenance</p>
+                  <p className="text-sm font-bold">{results.metadata?.patient_info?.region || "N/A"}</p>
+                </div>
               </div>
-              <div className="bg-default-50 p-6 rounded-xl border border-default-100 space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-default-500 font-bold uppercase">Patient Info</p>
-                    <p className="text-sm font-bold">{results.metadata?.patient_info?.age}y, {results.metadata?.patient_info?.sex}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-default-500 font-bold uppercase">Provenance</p>
-                    <p className="text-sm font-bold">{results.metadata?.patient_info?.region || "N/A"}</p>
-                  </div>
+              <Divider />
+              <div className="space-y-4">
+                <p className="text-xs text-default-600 font-bold uppercase">Clinical Indicators</p>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(results.metadata?.symptoms || {}).map(([key, value]) => (
+                    value === true && <Chip key={key} size="md" variant="flat" color="primary" className="text-xs font-bold">{key.replace("_", " ")}</Chip>
+                  ))}
+                  {Object.entries(results.metadata?.risk_factors || {}).map(([key, value]) => (
+                    value === true && <Chip key={key} size="md" variant="flat" color="warning" className="text-xs font-bold">{key.replace("_", " ")}</Chip>
+                  ))}
                 </div>
-                <Divider />
-                <div className="space-y-4">
-                  <p className="text-xs text-default-600 font-bold uppercase">Clinical Indicators</p>
-                  <div className="flex flex-wrap gap-2">
-                    {Object.entries(results.metadata?.symptoms || {}).map(([key, value]) => (
-                      value === true && <Chip key={key} size="md" variant="flat" color="primary" className="text-xs font-bold">{key.replace("_", " ")}</Chip>
-                    ))}
-                    {Object.entries(results.metadata?.risk_factors || {}).map(([key, value]) => (
-                      value === true && <Chip key={key} size="md" variant="flat" color="warning" className="text-xs font-bold">{key.replace("_", " ")}</Chip>
-                    ))}
-                  </div>
-                </div>
-                <Divider />
-                <div className="space-y-2">
-                  <p className="text-xs text-default-600 font-bold uppercase">Clinical Observations</p>
-                  <p className="text-sm leading-relaxed text-default-700 italic">
-                    {results.metadata?.clinical_history || "No additional observations provided."}
-                  </p>
-                </div>
+              </div>
+              <Divider />
+              <div className="space-y-2">
+                <p className="text-xs text-default-600 font-bold uppercase">Clinical Observations</p>
+                <p className="text-sm leading-relaxed text-default-700 italic">
+                  {results.metadata?.clinical_history || "No additional observations provided."}
+                </p>
               </div>
             </div>
-          </CardBody>
-        </Card>
+          </div>
+        </CardBody>
+      </Card>
 
       {/* 5. Medical Summary & Insights Card */}
       {reportContent && (
@@ -126,7 +179,7 @@ export function DiagnosticReport({ results, previewUrl }: DiagnosticReportProps)
                 <p className="text-sm font-black text-default-800 uppercase tracking-wider">Medical Summary & Insights</p>
                 <p className="text-xs text-default-600 font-semibold leading-relaxed">Automated synthesis of model results and clinical domain knowledge.</p>
               </div>
-                <MarkdownRenderer content={reportContent} />
+              <MarkdownRenderer content={reportContent} />
             </div>
           </CardBody>
         </Card>
@@ -141,23 +194,28 @@ export function DiagnosticReport({ results, previewUrl }: DiagnosticReportProps)
                 <p className="text-sm font-black text-default-800 uppercase tracking-wider">Evidence</p>
                 <p className="text-xs text-default-600 font-semibold leading-relaxed">Key model signals supporting this assessment.</p>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {evidence.map((item: EvidenceItem, index) => (
                   <div
                     key={`${item.id}-${index}`}
-                    className="p-4 rounded-xl border border-default-200 bg-default-50"
+                    className="p-5 rounded-xl border border-default-200 bg-default-50 transition-all hover:border-primary/20 hover:bg-primary/5"
                   >
-                    <div className="flex items-center justify-between gap-4">
-                      <p className="text-sm font-bold text-default-800">{item.metadata?.title || item.id}</p>
-                      <Chip size="md" variant="flat" color="primary" className="text-xs font-bold">
-                        {(item.score * 100).toFixed(1)}%
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 space-y-2">
+                        {item.metadata?.source && (
+                          <p className="text-xs font-bold text-primary uppercase tracking-wider">
+                            {item.metadata?.source}
+                          </p>)}
+                        {item.content && (
+                          <p className="text-sm text-default-600 leading-relaxed">
+                            {item.content}
+                          </p>
+                        )}
+                      </div>
+                      <Chip size="sm" variant="flat" color="primary" className="text-xs font-bold">
+                        {`Score: ${(item.score * 100).toFixed(1)}%`}
                       </Chip>
                     </div>
-                    {item.text && (
-                      <p className="mt-2 text-sm text-default-600 leading-relaxed">
-                        {item.text}
-                      </p>
-                    )}
                   </div>
                 ))}
               </div>

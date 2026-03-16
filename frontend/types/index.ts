@@ -10,10 +10,12 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 
 export interface EvidenceItem {
   id: string;
-  text: string;
   score: number;
+  content: string;
   metadata: {
-    title?: string;
+    document_id: string;
+    chunk_index: number;
+    source?: string;
     [key: string]: any;
   };
 }
