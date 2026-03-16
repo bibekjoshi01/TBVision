@@ -20,6 +20,9 @@ def build_model(mode: str, backbones, dropout: float, use_mc_dropout: bool):
             backbones=backbones, dropout_rate=dropout, use_mc_dropout=use_mc_dropout
         )
     return TBClassifier(backbone=backbones[0], dropout=dropout)
+    return TBClassifier(
+        backbone=backbones[0], dropout=dropout, use_mc_dropout=use_mc_dropout
+    )
 
 
 def run_test(args):
@@ -43,6 +46,7 @@ def run_test(args):
         args.mode, backbone_list, args.dropout, use_mc_dropout=args.mc_dropout
     ).to(DEVICE)
     model.load_state_dict(torch.load(checkpoint_path, map_location=DEVICE))
+    model.eval()
 
     test_dataset = CXRDataset(
         root=args.data_dir, split="test", transforms=get_val_transforms(args.image_size)
