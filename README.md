@@ -111,21 +111,6 @@ Only uncertain cases are forwarded to advanced AI models for deeper analysis.
 
 TB-Vision follows a **multi-stage AI pipeline**.
 
-```mermaid
-flowchart LR
-    A["CXR Upload\n(Frontend / Clinician)"]
-    A --> B["ClassifierService\n(DenseNet / EfficientNet / ResNet ensemble)"]
-    B --> C["Grad-CAM + Uncertainty"]
-    C --> D["Analyzer"]
-    D --> E{Online?}
-    E -- Yes --> F["RetrievalService\n(Qdrant + WHO PDFs)"]
-    E -- Yes --> G["GenerationService\n(Mistral validation + synthesis)"]
-    F --> G
-    D --> H["RAG memory\n(SQLite reports + follow-up history)"]
-    H --> I["/api/predict\nReport + report_id/summary"]
-    I --> J["/api/follow-up\nQuestion + history → LLM answer"]
-    J --> H
-```
 
 ### Stage 1 — Local CNN Ensemble
 Models used:
