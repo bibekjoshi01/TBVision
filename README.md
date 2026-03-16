@@ -2,6 +2,16 @@
 
 ### Explainable AI for Tuberculosis Screening in Resource-Limited Settings
 
+
+### 🔗 Links
+
+| Resource   | Link                                        |
+| ---------- | ------------------------------------------- |
+| Demo Video | https://www.youtube.com/watch?v=1Haj5EFSahw |
+| Presentation Link | https://gamma.app/docs/PROBLEM-STATEMENT-13dzdo0ba29p1w5?mode=present#card-rpp0rb40e5f4lfr |
+
+---
+
 TB-Vision is a **clinical decision support system for tuberculosis screening** that combines lightweight deep learning models with explainable AI and intelligent validation.
 The system is designed for **rural clinics and low-resource healthcare environments**, where radiologists and diagnostic infrastructure are limited.
 
@@ -12,15 +22,6 @@ The system is designed for **rural clinics and low-resource healthcare environme
 This hybrid design enables **fast, affordable, and scalable TB screening worldwide.**
 
 ![Diagnostic Report](images/diagnostic_report.png)
-
----
-
-### 🔗 Links
-
-| Resource   | Link                                        |
-| ---------- | ------------------------------------------- |
-| Demo Video | https://www.youtube.com/watch?v=1Haj5EFSahw |
-| Presentation Link | https://gamma.app/docs/PROBLEM-STATEMENT-13dzdo0ba29p1w5?mode=present#card-rpp0rb40e5f4lfr |
 
 ---
 
