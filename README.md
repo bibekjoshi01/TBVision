@@ -17,7 +17,7 @@ This hybrid design enables **fast, affordable, and scalable TB screening worldwi
 
 | Resource | Link |
 |--------|------|
-| Demo Video | https://youtu.be/... |
+| Demo Video | [https://youtu.be/...](https://www.youtube.com/watch?v=1Haj5EFSahw) |
 
 ---
 
