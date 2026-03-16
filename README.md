@@ -17,7 +17,7 @@ This hybrid design enables **fast, affordable, and scalable TB screening worldwi
 
 | Resource | Link |
 |--------|------|
-| Demo Video | https://youtu.be/... |
+| Demo Video | https://www.youtube.com/watch?v=1Haj5EFSahw |
 
 ---
 
@@ -157,3 +157,22 @@ This helps detect cases where the model may be unsure.
 When uncertainty is high, the system can optionally use cloud AI models to validate findings and generate clinical explanations.
 
 This ensures **safety without requiring constant internet connectivity.**
+
+## 📈 Performance
+
+- **AUC:** 0.9978 – near-perfect discrimination between TB and non-TB cases.
+- **F1:** 0.9781 – maintains strong balance between precision and recall.
+- **Accuracy:** 0.9769 – reflects consistent predictions on the validation set.
+- **Sensitivity:** 0.9787 and **Specificity:** 0.9883 – demonstrates both high true positive and true negative rates.
+- **Class accuracy:** [Normal: 0.984, TB: 0.956, Other pathologies: 0.996].
+
+## 🖼️ Visual Assets
+
+1. **System architecture:** the full TB-Vision pipeline from CXR upload through explainability and escalation.
+   ![System architecture diagram](images/architecture.png)
+2. **Classifier decisions:** ensemble output with probabilities, uncertainty, and Grad-CAM overlays situating the model rationale.
+   ![Classifier output with Grad-CAM](images/classifier.png)
+3. **Confusion matrix:** per-class prediction breakdown, highlighting the ensemble’s precision and recall trade-offs.
+   ![Confusion matrix](images/confusion_matrix.png)
+4. **ROC curve:** discrimination capability across thresholds for the TB versus non-TB classification.
+   ![ROC curve](images/roc_curve.png)
