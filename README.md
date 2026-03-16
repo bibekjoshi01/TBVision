@@ -11,6 +11,8 @@ The system is designed for **rural clinics and low-resource healthcare environme
 
 This hybrid design enables **fast, affordable, and scalable TB screening worldwide.**
 
+![Diagnostic Report](images/diagnostic_report.png)
+
 ---
 
 ### 🔗 Links
