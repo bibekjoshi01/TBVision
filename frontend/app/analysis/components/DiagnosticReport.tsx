@@ -4,7 +4,7 @@ import { Divider } from "@heroui/divider";
 import { Image } from "@heroui/image";
 import { Progress as UIProgress } from "@heroui/progress";
 import { Chip as UIChip } from "@heroui/chip";
-import type { PredictionResponse } from "@/types";
+import type { EvidenceItem, PredictionResponse } from "@/types";
 import { ProbabilityPie } from "./ProbabilityPie";
 import MarkdownRenderer from "@/components/markdown/markdown-renderer";
 import ChatSection from "./ChatSection";
@@ -142,20 +142,20 @@ export function DiagnosticReport({ results, previewUrl }: DiagnosticReportProps)
                 <p className="text-xs text-default-600 font-semibold leading-relaxed">Key model signals supporting this assessment.</p>
               </div>
               <div className="space-y-3">
-                {evidence.map((item, index) => (
+                {evidence.map((item: EvidenceItem, index) => (
                   <div
-                    key={`${item.label}-${index}`}
+                    key={`${item.id}-${index}`}
                     className="p-4 rounded-xl border border-default-200 bg-default-50"
                   >
                     <div className="flex items-center justify-between gap-4">
-                      <p className="text-sm font-bold text-default-800">{item.label}</p>
+                      <p className="text-sm font-bold text-default-800">{item.metadata?.title || item.id}</p>
                       <Chip size="md" variant="flat" color="primary" className="text-xs font-bold">
                         {(item.score * 100).toFixed(1)}%
                       </Chip>
                     </div>
-                    {item.description && (
+                    {item.text && (
                       <p className="mt-2 text-sm text-default-600 leading-relaxed">
-                        {item.description}
+                        {item.text}
                       </p>
                     )}
                   </div>
